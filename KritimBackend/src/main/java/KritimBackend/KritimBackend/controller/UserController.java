@@ -1,4 +1,4 @@
-package KritimBackend.KritimBackend.controller;
+package KritimBackend.KritimBackend.controller;;
 
 import KritimBackend.KritimBackend.model.Users;
 import KritimBackend.KritimBackend.repository.UserRepository;
