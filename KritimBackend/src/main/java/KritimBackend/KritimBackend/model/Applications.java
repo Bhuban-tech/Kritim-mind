@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 public class Applications {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long applicationId;
+    private Long applicationId;;
 
     public Applications() {
     }

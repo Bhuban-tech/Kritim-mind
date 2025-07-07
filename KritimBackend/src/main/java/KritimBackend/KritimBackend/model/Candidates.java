@@ -8,7 +8,7 @@ import lombok.Data;
 public class Candidates {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long candidateId;
+    private Long candidateId;;
 
     @ManyToOne
     @JoinColumn(name = "vacancyId", referencedColumnName = "vacancyId")

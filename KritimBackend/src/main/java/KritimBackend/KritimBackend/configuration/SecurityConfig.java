@@ -23,4 +23,4 @@ public class SecurityConfig {
                 .logout(logout -> logout.disable());
         return http.build();
     }
-}
+};

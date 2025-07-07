@@ -13,7 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class UserServices {
     @Autowired
-    private UserRepository userRepo;
+    private UserRepository userRepo;;
 
     private final PasswordEncoder encoder = new BCryptPasswordEncoder();
 

@@ -14,7 +14,7 @@ public class Vacancies {
 
     @ManyToOne
     @JoinColumn(name = "userId", referencedColumnName="userId")
-    private Users vacancyPublisher;
+    private Users vacancyPublisher;;
 
     @Column(nullable = false)
     private Timestamp postedAt;

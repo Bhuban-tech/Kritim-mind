@@ -12,7 +12,7 @@ public class Services {
         this.serviceTitle = serviceTitle;
         this.serviceDescription = serviceDescription;
         this.serviceLogo = serviceLogo;
-    }
+    };
 
     public Services() {
     }
