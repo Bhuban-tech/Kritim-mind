@@ -6,7 +6,7 @@ public class SessionDTO {
 
     public SessionDTO(String userId, String userRole) {
         this.userId = userId;
-        this.userRole = userRole;
+        this.userRole = userRole;;
     }
 
     // Getters and setters

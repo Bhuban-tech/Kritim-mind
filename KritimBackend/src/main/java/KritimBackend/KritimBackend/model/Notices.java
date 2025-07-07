@@ -13,7 +13,7 @@ public class Notices {
     private Long noticeId;
 
     @Column(nullable = false)
-    private String noticeTitle;
+    private String noticeTitle;;
 
     public Notices() {
     }

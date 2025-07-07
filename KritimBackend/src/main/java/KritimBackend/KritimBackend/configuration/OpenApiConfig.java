@@ -16,4 +16,4 @@ public class OpenApiConfig {
                         .version("v1.0")
                         .description("API documentation for Krimmind Backend"));
     }
-}
+};

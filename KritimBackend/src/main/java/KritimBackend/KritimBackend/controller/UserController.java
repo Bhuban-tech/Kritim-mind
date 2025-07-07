@@ -19,7 +19,7 @@ import java.util.Map;
 @CrossOrigin(origins = "http://127.0.0.1:3000", allowCredentials = "true")
 public class UserController {
     @Autowired
-    private UserServices userServices;
+    private UserServices userServices;;
 
     @Autowired
     private UserRepository userRepository;
