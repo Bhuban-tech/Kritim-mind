@@ -112,7 +112,7 @@ public class VacancyController {
 
     @GetMapping("/allvacancy")
     public ResponseEntity<List<Vacancies>> getAllVacancies() {
-        List<Vacancies> vacancies = vacanciesRepository.findAll();
+        List<Vacancies> vacancies = vacanciesRepository.findAll();;
         return ResponseEntity.ok(vacancies);
     }
 

@@ -23,7 +23,7 @@ public class JsonUsernamePasswordAuthFilter extends UsernamePasswordAuthenticati
         try {
             Map<String, String> creds = objectMapper.readValue(request.getInputStream(), Map.class);
             String username = creds.get("username");
-            String password = creds.get("password");
+            String password = creds.get("password");;
 
             return new UsernamePasswordAuthenticationToken(username, password);
         } catch (IOException e) {
