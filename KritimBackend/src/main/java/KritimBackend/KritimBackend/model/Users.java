@@ -16,6 +16,10 @@ public class Users {
     private String username;
 
     @Column(nullable = false)
+    private String userDesignation;
+
+
+    @Column(nullable = false)
     private String password;
 
     @Column(nullable = false, unique = true)
@@ -34,8 +38,9 @@ public class Users {
     public Users() {
     }
 
-    public Users(Long userId, String username, String password, String email, Roles role, byte[] imageBuffer) {
+    public Users(Long userId, String userDesignation, String username, String password, String email, Roles role, byte[] imageBuffer) {
         this.userId = userId;
+        this.userDesignation= userDesignation;
         this.username = username;
         this.password = password;
         this.email = email;
