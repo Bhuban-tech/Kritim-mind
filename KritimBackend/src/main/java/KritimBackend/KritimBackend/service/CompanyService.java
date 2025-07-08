@@ -19,4 +19,4 @@ public interface CompanyService {
     TestimonialsDtos updateTestimonial(TestimonialsDtos dto, MultipartFile file, Long userId) throws IOException;
 
     boolean deleteTestimonial(Integer id);
-}
+};

@@ -19,4 +19,4 @@ public interface NoticeService {
 
     boolean deleteNotice(Integer id, Long userId);
 
-}
+};

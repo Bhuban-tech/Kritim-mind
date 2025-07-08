@@ -42,4 +42,4 @@ public class Users {
         this.role = role;
         this.imageBuffer = imageBuffer;
     }
-}
+};

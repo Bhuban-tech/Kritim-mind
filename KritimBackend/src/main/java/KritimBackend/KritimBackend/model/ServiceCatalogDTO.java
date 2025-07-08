@@ -26,4 +26,4 @@ public class ServiceCatalogDTO {
                     ", imageFile=" + (imageFile != null ? imageFile.getOriginalFilename() : "null") +
                     '}';
         }
-}
+};

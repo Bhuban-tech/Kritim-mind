@@ -13,4 +13,4 @@ public interface ApplicationsRepository extends JpaRepository<Applications, Long
     Optional<Applications> findByAppliedVacancyAndApplicantEmail(Vacancies vacancy, String applicantEmail);
 
     List<Applications> findAllByAppliedVacancy(Vacancies vacancy);
-}
+};

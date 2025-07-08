@@ -57,7 +57,7 @@ public class TestimonialsServiceImpl implements CompanyService {
                 .stream()
                 .map(this::convertEntityToDto)
                 .collect(Collectors.toList());
-    }
+    };
 
     @Override
     public TestimonialsDtos updateTestimonial(TestimonialsDtos dto, MultipartFile file, Long userId) throws IOException {

@@ -27,3 +27,4 @@ public class Candidates {
         this.candidate = candidate;
     }
 }
+;
