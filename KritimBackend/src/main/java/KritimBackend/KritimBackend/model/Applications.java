@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 public class Applications {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long applicationId;;
+    private Long applicationId;
 
     public Applications() {
     }
@@ -20,9 +20,21 @@ public class Applications {
     @Column(nullable = false)
     private String applicantEmail;
 
-   @Column(nullable = false)
-   private Timestamp appliedAt;
-    @Lob
     @Column(nullable = false)
+    private Timestamp appliedAt;
+    @Lob
+    @Column(nullable = false, columnDefinition = "LONGBLOB")
     private byte[] applicantCV;
+
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ApplicationStatus status = ApplicationStatus.PENDING;
+
+
+    @ManyToOne
+    @JoinColumn(name = "vacancyId", referencedColumnName = "vacancyId")
+    private Vacancies appliedVacancy;
+
+
 }

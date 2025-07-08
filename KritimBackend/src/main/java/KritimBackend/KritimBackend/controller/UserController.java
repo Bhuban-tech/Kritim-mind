@@ -24,7 +24,7 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    // ✅ CREATE USER
+
     @PostMapping("/create")
     public ResponseEntity<String> createUser(@RequestBody Users user) {
         if (user.getAddedBy() == null) {
@@ -36,19 +36,24 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Adder user not found");
         }
 
-        if (!"Admin".equals(adder.getRole())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only admins can add users");
+        String role = adder.getRole().toString();
+        if(role.equals("Admin")){
+            try {
+                userServices.createUser(user);
+                return ResponseEntity.ok("User created successfully");
+            } catch (ResponseStatusException ex) {
+                return ResponseEntity.status(ex.getStatusCode()).body(ex.getReason());
+            } catch (Exception ex) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error");
+            }
         }
+        return  ResponseEntity.status(HttpStatus.FORBIDDEN).body("Forbidden");
 
-        try {
-            userServices.createUser(user);
-            return ResponseEntity.ok("User created successfully");
-        } catch (ResponseStatusException ex) {
-            return ResponseEntity.status(ex.getStatusCode()).body(ex.getReason());
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error");
-        }
+
     }
+
+
+
 
     // ✅ LOGIN
     @PostMapping("/login")

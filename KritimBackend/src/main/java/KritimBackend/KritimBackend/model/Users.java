@@ -34,8 +34,9 @@ public class Users {
     public Users() {
     }
 
-    public Users(Long userId, String username, String password, String email, Roles role, byte[] imageBuffer) {
+    public Users(Long userId, Long addedBy, String username, String password, String email, Roles role, byte[] imageBuffer) {
         this.userId = userId;
+        this.addedBy = addedBy;
         this.username = username;
         this.password = password;
         this.email = email;
