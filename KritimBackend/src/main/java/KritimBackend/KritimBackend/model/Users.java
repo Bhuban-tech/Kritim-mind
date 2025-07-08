@@ -88,5 +88,11 @@ public class Users {
         this.imageBuffer = imageBuffer;
     }
 
+    public Long getAddedBy() {
+        return addedBy;
+    }
 
+    public void setAddedBy(Long addedBy) {
+        this.addedBy = addedBy;
+    }
 }
