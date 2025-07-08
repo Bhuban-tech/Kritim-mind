@@ -38,16 +38,25 @@ class ServiceCatalogController {
 
     // Create a new service
     @PostMapping("/create")
-    public ResponseEntity<String> createService(@ModelAttribute ServiceCatalogDTO dto, HttpSession session) throws IOException {
-        Long userId = (Long) session.getAttribute("userId");
-        if (userId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not logged in");
+    public ResponseEntity<String> createService(
+            @ModelAttribute ServiceCatalogDTO dto,
+            @RequestParam("userId") Long userId,
+            @RequestParam("role") String role
+    ) throws IOException {
+
+        if (!role.equalsIgnoreCase("Admin")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only Admin can perform this action");
+        }
 
         Users user = userService.getUserById(userId);
-        if (user.getRole() != Roles.Admin) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only Admin can perform this action");
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid user ID");
+        }
 
         serviceCatalogService.createService(dto, user);
         return ResponseEntity.ok("Service created successfully");
     }
+
 
 
     // Get all services
