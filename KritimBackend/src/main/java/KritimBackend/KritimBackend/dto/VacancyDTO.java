@@ -14,7 +14,7 @@ public class VacancyDTO {
                       Long vacancyPublisherId, String vacancyPublisherUsername,
                       Timestamp postedAt) {
         this.vacancyId = vacancyId;
-        this.serviceName = serviceName;
+        this.serviceName = serviceName;;
         this.serviceDescription = serviceDescription;
         this.vacancyPublisherId = vacancyPublisherId;
         this.vacancyPublisherUsername = vacancyPublisherUsername;
