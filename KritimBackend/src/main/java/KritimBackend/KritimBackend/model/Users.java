@@ -89,4 +89,11 @@ public class Users {
     }
 
 
+    public Long getAddedBy() {
+        return addedBy;
+    }
+
+    public void setAddedBy(Long addedBy) {
+        this.addedBy = addedBy;
+    }
 }
