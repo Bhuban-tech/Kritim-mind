@@ -101,12 +101,13 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<Users> getUsers(){
+    public ResponseEntity<Users> getUsers(Long id){
+
         try {
             Users users = userRepository.findAll().iterator().next();
             return ResponseEntity.ok(users);
         }
-        catch (Exception ex) {
+        catch (RuntimeException ex) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
         }
     }
