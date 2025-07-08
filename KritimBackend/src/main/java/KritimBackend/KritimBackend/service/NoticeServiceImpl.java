@@ -25,7 +25,7 @@ public class NoticeServiceImpl implements NoticeService {
     public NoticeServiceImpl(NoticeRepo noticeRepo, UserRepository userRepo) {
         this.noticeRepo = noticeRepo;
         this.userRepo = userRepo;
-    }
+    };
 
     @Override
     public NoticeDtos addNotice(NoticeDtos dto, MultipartFile file, Long userId) throws IOException {

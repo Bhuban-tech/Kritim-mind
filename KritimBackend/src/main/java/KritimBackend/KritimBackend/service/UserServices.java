@@ -50,4 +50,4 @@ public class UserServices {
         return userRepo.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-}
+};

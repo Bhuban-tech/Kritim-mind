@@ -48,4 +48,4 @@ public class TestimonialsDtos {
     public void setPostedBy(String postedBy) {
         this.postedBy = postedBy;
     }
-}
+};

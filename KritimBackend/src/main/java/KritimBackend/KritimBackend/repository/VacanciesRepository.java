@@ -14,4 +14,4 @@ public interface VacanciesRepository extends JpaRepository<Vacancies, Long> {
             "v.vacancyPublisher.userId, v.vacancyPublisher.username, v.postedAt) " +
             "FROM Vacancies v")
     List<VacancyDTO> findAllVacancyDTOs();
-}
+};

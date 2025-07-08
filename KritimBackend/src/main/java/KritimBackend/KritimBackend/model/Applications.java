@@ -37,4 +37,4 @@ public class Applications {
     private Vacancies appliedVacancy;
 
 
-}
+};

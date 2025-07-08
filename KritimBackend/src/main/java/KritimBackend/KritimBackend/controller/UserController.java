@@ -77,8 +77,8 @@ public class UserController {
 
     // ✅ LOGOUT
     @GetMapping("/logout")
-    public ResponseEntity<String> logout(HttpSession session) {
-        session.invalidate(); // properly log out
+    public ResponseEntity<String> logout() {
+       // properly log out
         return ResponseEntity.ok("Logout successful");
     }
 
@@ -99,4 +99,4 @@ public class UserController {
         userRepository.save(existingUser);
         return ResponseEntity.ok("User updated successfully");
     }
-}
+};

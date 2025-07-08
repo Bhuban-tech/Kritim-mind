@@ -15,4 +15,4 @@ public class NoticeAndTestimonialsConfig implements WebMvcConfigurer {
                 .addResourceLocations("file:" + uploadDir);;
     }
 
-}
+};

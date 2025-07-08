@@ -30,4 +30,4 @@ public class Vacancies {
     private byte[] serviceImage;
 
 
-}
+};

@@ -101,4 +101,4 @@ public class Notices {
     public void setNoticePublisher(Users noticePublisher) {
         this.noticePublisher = noticePublisher;
     }
-}
+};

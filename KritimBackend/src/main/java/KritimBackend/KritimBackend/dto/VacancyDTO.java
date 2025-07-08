@@ -20,4 +20,4 @@ public class VacancyDTO {
         this.vacancyPublisherUsername = vacancyPublisherUsername;
         this.postedAt = postedAt;
     }
-}
+};

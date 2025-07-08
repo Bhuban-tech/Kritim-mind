@@ -77,4 +77,4 @@ public class NoticeDtos {
     public void setNoticeImage(byte[] noticeImage) {
         this.noticeImage = noticeImage;
     }
-}
+};
