@@ -1,4 +1,4 @@
-package KritimBackend.KritimBackend.controller;;
+package KritimBackend.KritimBackend.controller;
 
 import KritimBackend.KritimBackend.model.Users;
 import KritimBackend.KritimBackend.repository.UserRepository;
@@ -7,71 +7,88 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@RequestMapping
 @RestController
-@CrossOrigin(origins = "http://127.0.0.1:3000", allowCredentials = "true")
+@RequestMapping
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class UserController {
+
     @Autowired
-    private UserServices userServices;;
+    private UserServices userServices;
 
     @Autowired
     private UserRepository userRepository;
 
+
     @PostMapping("/create")
-    public ResponseEntity<String> createUser(@RequestBody Users user){
+    public ResponseEntity<String> createUser(@RequestBody Users user) {
+        if (user.getAddedBy() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("addedBy is required");
+        }
+
         Users adder = userRepository.findById(user.getAddedBy()).orElse(null);
         if (adder == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Adder user not found");
         }
-        if(adder.getRole().equals("Admin")) {
+
+        String role = adder.getRole().toString();
+        if(role.equals("Admin")){
             try {
                 userServices.createUser(user);
-                return ResponseEntity.ok("User created");
+                return ResponseEntity.ok("User created successfully");
             } catch (ResponseStatusException ex) {
-                throw new RuntimeException("internal server error");
+                return ResponseEntity.status(ex.getStatusCode()).body(ex.getReason());
+            } catch (Exception ex) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error");
             }
-
         }
-        return (ResponseEntity<String>) ResponseEntity.badRequest();
+        return  ResponseEntity.status(HttpStatus.FORBIDDEN).body("Forbidden");
+
 
     }
 
 
 
 
+    // ✅ LOGIN
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody Users users){
-        try{
-            Users users1 = userServices.login(users);
+    public ResponseEntity<Map<String, Object>> login(@RequestBody Users users) {
+        try {
+            Users loggedUser = userServices.login(users);
             Map<String, Object> response = new HashMap<>();
-            response.put("userId", users1.getUserId());
-            response.put("userRole", users1.getRole());
+            response.put("userId", loggedUser.getUserId());
+            response.put("userRole", loggedUser.getRole());
             return ResponseEntity.ok(response);
-        } catch (ResponseStatusException ex){
-            throw new RuntimeException("user not found");
+        } catch (ResponseStatusException ex) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("message", "User not found or invalid credentials");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+        } catch (Exception ex) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("message", "Internal server error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
     }
 
+    // ✅ LOGOUT
     @GetMapping("/logout")
-    public ResponseEntity<String> logout(HttpSession session){
-        return ResponseEntity.ok("logout successful");
-
+    public ResponseEntity<String> logout() {
+       // properly log out
+        return ResponseEntity.ok("Logout successful");
     }
 
+    // ✅ UPDATE USER
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateUser(@PathVariable Long id, @RequestBody Users updatedUser) {
-
         Users existingUser = userRepository.findById(id).orElse(null);
 
         if (existingUser == null) {
-            return ResponseEntity.status(404).body("User not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
 
         existingUser.setUsername(updatedUser.getUsername());
@@ -82,6 +99,4 @@ public class UserController {
         userRepository.save(existingUser);
         return ResponseEntity.ok("User updated successfully");
     }
-
-
-}
+};;

@@ -125,3 +125,4 @@ class ServiceCatalogController {
         return ResponseEntity.ok("Service deleted successfully");
     }
 }
+;

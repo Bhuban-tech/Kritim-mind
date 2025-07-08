@@ -55,4 +55,4 @@ public class ServiceCatalogService {
     public void deleteById(Long id) {
         serviceCatalogRepository.deleteById(id);
     }
-}
+};
