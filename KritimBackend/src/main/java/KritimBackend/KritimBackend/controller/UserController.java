@@ -99,4 +99,29 @@ public class UserController {
         userRepository.save(existingUser);
         return ResponseEntity.ok("User updated successfully");
     }
+
+    @GetMapping("/users")
+    public ResponseEntity<Users> getUsers(){
+        try {
+            Users users = userRepository.findAll().iterator().next();
+            return ResponseEntity.ok(users);
+        }
+        catch (Exception ex) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
+        }
+    }
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<Users> getUser(@PathVariable Long id){
+        try{
+            Users users = userRepository.findById(id).orElse(null);
+            if (users == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+            return ResponseEntity.ok(users);
+        }catch (RuntimeException ex){
+            return ResponseEntity.notFound().build();
+        }
+    }
 };;
+
