@@ -12,7 +12,7 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Krimmind API")
+                        .title("Kritimmind API")
                         .version("v1.0")
                         .description("API documentation for Krimmind Backend"));
     }
