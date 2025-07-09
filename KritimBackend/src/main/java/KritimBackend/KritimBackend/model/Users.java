@@ -8,15 +8,16 @@ import lombok.Data;
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    @Column(name="UserId")
+    private Long UserId;
 
     @Column(nullable = false)
     private String username;
     @Column(nullable = false)
     private String password;
 
-    public Users(Long userId, String username, String password, String email, Roles role, byte[] imageBuffer) {
-        this.userId = userId;
+    public Users(Long UserId, String username, String password, String email, Roles role, byte[] imageBuffer) {
+        this.UserId = UserId;
         this.username = username;
         this.password = password;
         this.email = email;
@@ -27,8 +28,8 @@ public class Users {
     @Column(nullable = false, unique = true)
     private String email;;
 
-    @Column(nullable = false)
-    private Long addedBy;
+    @Column(name="AddedBy",nullable = false)
+    private Long AddedBy;
 
     public Users() {
     }
@@ -41,11 +42,11 @@ public class Users {
     private byte[] imageBuffer;
 
     public Long getUserId() {
-        return userId;
+        return UserId;
     }
 
     public void setUserId(Long userId) {
-        this.userId = userId;
+        this.UserId = UserId;
     }
 
     public String getUsername() {

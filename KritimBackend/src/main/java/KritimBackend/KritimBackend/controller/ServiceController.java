@@ -1,10 +1,10 @@
 package KritimBackend.KritimBackend.controller;
 
 import KritimBackend.KritimBackend.model.Roles;
-import KritimBackend.KritimBackend.model.ServiceCatalog;
-import KritimBackend.KritimBackend.model.ServiceCatalogDTO;
+import KritimBackend.KritimBackend.model.Services;
+import KritimBackend.KritimBackend.model.ServiceDTO;
 import KritimBackend.KritimBackend.model.Users;
-import KritimBackend.KritimBackend.service.ServiceCatalogService;
+import KritimBackend.KritimBackend.service.ServicesService;
 import KritimBackend.KritimBackend.service.UserServices;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,22 +16,24 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/services")
-class ServiceCatalogController {
+public class ServiceController {
 
     @Autowired
-    private ServiceCatalogService serviceCatalogService;
+    private ServicesService servicesService;
 
     @Autowired
     private UserServices userService;
 
     // Check if user is an admin
     private ResponseEntity<String> checkAdminSession(HttpSession session) {
-        Long userId = (Long) session.getAttribute("userId");
+        Long userId = (Long) session.getAttribute("id"); // Changed from userId to id
         if (userId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not logged in");
         Users user = userService.getUserById(userId);
+        if (user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         if (user.getRole() != Roles.Admin) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only Admin can perform this action");
         return null;
     }
@@ -39,11 +41,10 @@ class ServiceCatalogController {
     // Create a new service
     @PostMapping("/create")
     public ResponseEntity<String> createService(
-            @ModelAttribute ServiceCatalogDTO dto,
+            @ModelAttribute ServiceDTO dto,
             @RequestParam("userId") Long userId,
             @RequestParam("role") String role
     ) throws IOException {
-
         if (!role.equalsIgnoreCase("Admin")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only Admin can perform this action");
         }
@@ -53,19 +54,17 @@ class ServiceCatalogController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid user ID");
         }
 
-        serviceCatalogService.createService(dto, user);
+        servicesService.createService(dto, user);
         return ResponseEntity.ok("Service created successfully");
     }
 
-
-
     // Get all services
     @GetMapping("/all")
-    public ResponseEntity<List<ServiceCatalogDTO>> getAllServices() {
-        List<ServiceCatalog> services = serviceCatalogService.getAllServices();
+    public ResponseEntity<List<ServiceDTO>> getAllServices() {
+        List<Services> services = servicesService.getAllServices();
 
-        List<ServiceCatalogDTO> dtos = services.stream().map(service -> {
-            ServiceCatalogDTO dto = new ServiceCatalogDTO();
+        List<ServiceDTO> dtos = services.stream().map(service -> {
+            ServiceDTO dto = new ServiceDTO();
             dto.setServiceId(service.getServiceId());
             dto.setServiceName(service.getServiceName());
             dto.setServiceDescription(service.getServiceDescription());
@@ -76,21 +75,19 @@ class ServiceCatalogController {
                 dto.setImageBase64(Base64.getEncoder().encodeToString(service.getImageData()));
             }
 
-            dto.setUserId(service.getUsers().getUserId());
-
+            dto.setUserId(service.getUsers().getUserId()); // Changed from getUserId to getId
             return dto;
-        }).toList();
+        }).collect(Collectors.toList());
 
         return ResponseEntity.ok(dtos);
     }
 
-
     // Get image byte data
     @GetMapping("/image/{id}")
     public ResponseEntity<byte[]> getImage(@PathVariable Long id) {
-        Optional<ServiceCatalog> optional = serviceCatalogService.getById(id);
+        Optional<Services> optional = servicesService.getById(id);
         if (optional.isPresent()) {
-            ServiceCatalog service = optional.get();
+            Services service = optional.get();
             return ResponseEntity.ok()
                     .header("Content-Type", service.getImageType() != null ? service.getImageType() : "image/jpeg")
                     .body(service.getImageData());
@@ -102,26 +99,41 @@ class ServiceCatalogController {
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateService(
             @PathVariable Long id,
-            @ModelAttribute ServiceCatalogDTO dto) throws IOException {
-
+            @ModelAttribute ServiceDTO dto) throws IOException {
         if (dto.getUserId() == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User ID is missing");
         }
 
         Users user = userService.getUserById(dto.getUserId());
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
         if (user.getRole() != Roles.Admin) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only Admin can perform this action");
         }
 
-        serviceCatalogService.updateService(id, dto);
+        servicesService.updateService(id, dto);
         return ResponseEntity.ok("Service updated successfully");
     }
 
     // Delete service
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteService(@PathVariable Long id) {
-        System.out.println("Deleting service with ID: " + id);
-        serviceCatalogService.deleteById(id);
+    public ResponseEntity<String> deleteService(
+            @PathVariable Long id,
+            @RequestParam("userId") Long userId,
+            @RequestParam("role") String role
+    ) {
+        if (!role.equalsIgnoreCase("Admin")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only Admin can perform this action");
+        }
+
+        Users user = userService.getUserById(userId);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid user ID");
+        }
+
+        servicesService.deleteById(id);
         return ResponseEntity.ok("Service deleted successfully");
     }
+
 }
