@@ -3,6 +3,8 @@ package KritimBackend.KritimBackend.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.sql.Blob;
+
 @Entity
 @Data
 @Table(name = "users")
@@ -31,9 +33,8 @@ public class Users {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Roles role;
-
     @Lob
-    @Column(nullable = true)
+    @Column(nullable = true, columnDefinition = "LONGBLOB")
     private byte[] imageBuffer;
 
     public Users() {

@@ -39,9 +39,9 @@ public class UserServices {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
 
-//        if (!passwordEncoder.matches(users.getPassword(), existingUser.getPassword())) {
-//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
-//        }
+        if (!passwordEncoder.matches(users.getPassword(), existingUser.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
+        }
 
         return existingUser;
     }
@@ -49,5 +49,8 @@ public class UserServices {
     public Users getUserById(Long id) {
         return userRepo.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
     }
+
+
+
 
 };

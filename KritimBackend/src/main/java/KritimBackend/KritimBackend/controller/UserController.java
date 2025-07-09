@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -53,8 +54,17 @@ public class UserController {
     }
 
 
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        try{
+            userRepository.deleteById(id);
+            return ResponseEntity.ok("User deleted successfully");
+        } catch (RuntimeException e) {
 
 
+            throw new RuntimeException(e);
+        }
+    }
     // ✅ LOGIN
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody Users users) {
@@ -96,18 +106,13 @@ public class UserController {
         userRepository.save(existingUser);
         return ResponseEntity.ok("User updated successfully");
     }
-
     @GetMapping("/users")
-    public ResponseEntity<Users> getUsers(Long id){
-
-        try {
-            Users users = userRepository.findAll().iterator().next();
-            return ResponseEntity.ok(users);
-        }
-        catch (RuntimeException ex) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
-        }
+    public ResponseEntity<List<Users>> getUsers(){
+        List<Users> users = userRepository.findAll();
+        return ResponseEntity.ok(users);
     }
+
+
 
     @GetMapping("/users/{id}")
     public ResponseEntity<Users> getUser(@PathVariable Long id){
@@ -121,5 +126,6 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+
 };;
 

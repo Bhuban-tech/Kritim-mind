@@ -6,7 +6,8 @@ import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
-public class ServiceDTO {
+public class
+ServiceDTO {
     @JsonProperty("ServiceId")
     private Long ServiceId;                    // for update/edit purposes
     @JsonProperty("ServiceName")
