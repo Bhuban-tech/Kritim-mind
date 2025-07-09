@@ -4,6 +4,7 @@ import KritimBackend.KritimBackend.model.Roles;
 import KritimBackend.KritimBackend.model.Services;
 import KritimBackend.KritimBackend.model.ServiceDTO;
 import KritimBackend.KritimBackend.model.Users;
+import KritimBackend.KritimBackend.repository.ServiceRepository;
 import KritimBackend.KritimBackend.service.ServicesService;
 import KritimBackend.KritimBackend.service.UserServices;
 import jakarta.servlet.http.HttpSession;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.Base64;
@@ -27,6 +29,8 @@ public class ServiceController {
 
     @Autowired
     private UserServices userService;
+    @Autowired
+    private ServiceRepository serviceRepository;
 
     // Check if user is an admin
     private ResponseEntity<String> checkAdminSession(HttpSession session) {
@@ -56,6 +60,30 @@ public class ServiceController {
 
         servicesService.createService(dto, user);
         return ResponseEntity.ok("Service created successfully");
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ServiceDTO> getServiceById(@PathVariable Long id) {
+        Services service = servicesService.getServiceById(id);  // You need to implement this in the service layer
+
+        if (service == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        ServiceDTO dto = new ServiceDTO();
+        dto.setServiceId(service.getServiceId());
+        dto.setServiceName(service.getServiceName());
+        dto.setServiceDescription(service.getServiceDescription());
+        dto.setImageType(service.getImageType());
+
+        if (service.getImageData() != null) {
+            dto.setImageData(service.getImageData());
+            dto.setImageBase64(Base64.getEncoder().encodeToString(service.getImageData()));
+        }
+
+        dto.setUserId(service.getUsers().getUserId());
+
+        return ResponseEntity.ok(dto);
     }
 
 

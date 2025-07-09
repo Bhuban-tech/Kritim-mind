@@ -55,4 +55,9 @@ public class ServicesService {
         public void deleteById(Long id) {
             serviceRepository.deleteById(id);
         }
+
+    public Services getServiceById(Long id) {
+        return serviceRepository.findById(id).orElse(null);
+    }
+
 }
