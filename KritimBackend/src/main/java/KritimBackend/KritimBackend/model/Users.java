@@ -3,8 +3,6 @@ package KritimBackend.KritimBackend.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.sql.Blob;
-
 @Entity
 @Data
 @Table(name = "users")
@@ -30,19 +28,18 @@ public class Users {
     @Column(nullable = false)
     private Long addedBy;
 
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Roles role;
+
     @Lob
-    @Column(nullable = true, columnDefinition = "LONGBLOB")
+    @Column(nullable = true)
     private byte[] imageBuffer;
 
     public Users() {
     }
 
-    public Users(Long userId, Long addedBy, String userDesignation, String username, String password, String email, Roles role, byte[] imageBuffer) {
+    public Users(Long userId, String userDesignation, String username, String password, String email, Roles role, byte[] imageBuffer) {
         this.userId = userId;
-        this.addedBy = addedBy;
         this.userDesignation= userDesignation;
         this.username = username;
         this.password = password;
