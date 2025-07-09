@@ -64,7 +64,7 @@ public class ServiceController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ServiceDTO> getServiceById(@PathVariable Long id) {
-        Services service = servicesService.getServiceById(id);  // You need to implement this in the service layer
+        Services service = servicesService.getServiceById(id);
 
         if (service == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
