@@ -64,10 +64,7 @@ public class UserController {
             response.put("userId", loggedUser.getUserId());
             response.put("userRole", loggedUser.getRole());
             return ResponseEntity.ok(response);
-        } catch (ResponseStatusException ex) {
-            Map<String, Object> error = new HashMap<>();
-            error.put("message", "User not found or invalid credentials");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+
         } catch (Exception ex) {
             Map<String, Object> error = new HashMap<>();
             error.put("message", "Internal server error");

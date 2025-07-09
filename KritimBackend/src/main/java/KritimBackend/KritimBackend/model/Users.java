@@ -28,6 +28,7 @@ public class Users {
     @Column(nullable = false)
     private Long addedBy;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Roles role;
 
@@ -38,8 +39,9 @@ public class Users {
     public Users() {
     }
 
-    public Users(Long userId, String userDesignation, String username, String password, String email, Roles role, byte[] imageBuffer) {
+    public Users(Long userId, Long addedBy, String userDesignation, String username, String password, String email, Roles role, byte[] imageBuffer) {
         this.userId = userId;
+        this.addedBy = addedBy;
         this.userDesignation= userDesignation;
         this.username = username;
         this.password = password;

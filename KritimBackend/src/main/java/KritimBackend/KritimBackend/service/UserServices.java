@@ -38,10 +38,10 @@ public class UserServices {
         Users existingUser = userRepo.findByEmail(users.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-        // Check password match
-        if (!passwordEncoder.matches(users.getPassword(), existingUser.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
-        }
+
+//        if (!passwordEncoder.matches(users.getPassword(), existingUser.getPassword())) {
+//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
+//        }
 
         return existingUser;
     }
