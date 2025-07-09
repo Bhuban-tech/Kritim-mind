@@ -4,17 +4,14 @@ import KritimBackend.KritimBackend.model.Roles;
 import KritimBackend.KritimBackend.model.Services;
 import KritimBackend.KritimBackend.model.ServiceDTO;
 import KritimBackend.KritimBackend.model.Users;
-import KritimBackend.KritimBackend.repository.ServiceRepository;
 import KritimBackend.KritimBackend.service.ServicesService;
 import KritimBackend.KritimBackend.service.UserServices;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import java.io.IOException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -29,18 +26,6 @@ public class ServiceController {
 
     @Autowired
     private UserServices userService;
-    @Autowired
-    private ServiceRepository serviceRepository;
-
-    // Check if user is an admin
-    private ResponseEntity<String> checkAdminSession(HttpSession session) {
-        Long userId = (Long) session.getAttribute("id"); // Changed from userId to id
-        if (userId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not logged in");
-        Users user = userService.getUserById(userId);
-        if (user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        if (user.getRole() != Roles.Admin) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only Admin can perform this action");
-        return null;
-    }
 
     // Create a new service
     @PostMapping("/create")
