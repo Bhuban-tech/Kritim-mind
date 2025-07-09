@@ -30,4 +30,8 @@ public class Vacancies {
     private byte[] serviceImage;
 
 
+<<<<<<< HEAD
 };
+=======
+}
+>>>>>>> hiyang

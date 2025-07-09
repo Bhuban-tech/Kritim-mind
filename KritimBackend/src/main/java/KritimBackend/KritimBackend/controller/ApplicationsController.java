@@ -3,7 +3,10 @@ package KritimBackend.KritimBackend.controller;
 import KritimBackend.KritimBackend.model.ApplicationStatus;
 import KritimBackend.KritimBackend.model.Applications;
 import KritimBackend.KritimBackend.model.Vacancies;
+<<<<<<< HEAD
 
+=======
+>>>>>>> hiyang
 import KritimBackend.KritimBackend.repository.ApplicationsRepository;
 import KritimBackend.KritimBackend.repository.VacanciesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,4 +142,8 @@ public class ApplicationsController {
         }
     }
 
+<<<<<<< HEAD
 };
+=======
+}
+>>>>>>> hiyang

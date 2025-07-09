@@ -14,10 +14,18 @@ public class VacancyDTO {
                       Long vacancyPublisherId, String vacancyPublisherUsername,
                       Timestamp postedAt) {
         this.vacancyId = vacancyId;
+<<<<<<< HEAD
         this.serviceName = serviceName;;
+=======
+        this.serviceName = serviceName;
+>>>>>>> hiyang
         this.serviceDescription = serviceDescription;
         this.vacancyPublisherId = vacancyPublisherId;
         this.vacancyPublisherUsername = vacancyPublisherUsername;
         this.postedAt = postedAt;
     }
+<<<<<<< HEAD
 };
+=======
+}
+>>>>>>> hiyang

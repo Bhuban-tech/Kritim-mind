@@ -20,8 +20,13 @@ public class Applications {
     @Column(nullable = false)
     private String applicantEmail;
 
+<<<<<<< HEAD
     @Column(nullable = false)
     private Timestamp appliedAt;
+=======
+   @Column(nullable = false)
+   private Timestamp appliedAt;
+>>>>>>> hiyang
     @Lob
     @Column(nullable = false, columnDefinition = "LONGBLOB")
     private byte[] applicantCV;
@@ -37,4 +42,8 @@ public class Applications {
     private Vacancies appliedVacancy;
 
 
+<<<<<<< HEAD
 };
+=======
+}
+>>>>>>> hiyang

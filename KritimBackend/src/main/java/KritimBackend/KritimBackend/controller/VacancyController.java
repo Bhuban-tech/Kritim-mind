@@ -112,7 +112,11 @@ public class VacancyController {
 
     @GetMapping("/allvacancy")
     public ResponseEntity<List<Vacancies>> getAllVacancies() {
+<<<<<<< HEAD
         List<Vacancies> vacancies = vacanciesRepository.findAll();;
+=======
+        List<Vacancies> vacancies = vacanciesRepository.findAll();
+>>>>>>> hiyang
         return ResponseEntity.ok(vacancies);
     }
 
@@ -129,4 +133,8 @@ public class VacancyController {
     }
 
 
+<<<<<<< HEAD
 };
+=======
+}
+>>>>>>> hiyang

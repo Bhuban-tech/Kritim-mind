@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Job Application Tester</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; max-width: 900px; }
+        h2 { color: #333; }
+        form, .application-list { margin-bottom: 30px; }
+        label { display: block; margin-top: 10px; font-weight: bold; }
+        input[type=text], input[type=email], select { width: 300px; padding: 6px; }
+        button { margin-top: 10px; padding: 8px 15px; cursor: pointer; }
+        table { border-collapse: collapse; width: 100%; margin-top: 15px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f0f0f0; }
+    </style>
+</head>
+<body>
+
+<h2>Apply for Job</h2>
+<form id="applyForm">
+    <label>Applicant Name:</label>
+    <input type="text" id="applicantName" required />
+
+    <label>Applicant Email:</label>
+    <input type="email" id="applicantEmail" required />
+
+    <label>Job ID:</label>
+    <input type="text" id="jobId" required />
+
+    <label>CV (PDF, JPG, PNG):</label>
+    <input type="file" id="cv" accept=".pdf, .jpg, .jpeg, .png" required />
+
+    <label>Description (optional):</label>
+    <input type="text" id="description" />
+
+    <button type="submit">Apply</button>
+</form>
+
+<div id="applyMessage"></div>
+
+<hr/>
+
+<h2>View Applications by Job ID</h2>
+<label>Job ID:</label>
+<input type="text" id="viewJobId" />
+<button id="loadApplicationsBtn">Load Applications</button>
+
+<div class="application-list" id="applicationList"></div>
+
+<script>
+    const backendUrl = 'http://localhost:8080';
+
+    // Handle Apply Form Submission
+    document.getElementById('applyForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const applicantName = document.getElementById('applicantName').value.trim();
+        const applicantEmail = document.getElementById('applicantEmail').value.trim();
+        const jobId = document.getElementById('jobId').value.trim();
+        const cvFile = document.getElementById('cv').files[0];
+        const description = document.getElementById('description').value.trim();
+
+        if (!applicantName || !applicantEmail || !jobId || !cvFile) {
+            alert("Please fill in all required fields and attach CV.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('applicantName', applicantName);
+        formData.append('applicantEmail', applicantEmail);
+        formData.append('jobId', jobId);
+        formData.append('cv', cvFile);
+        if (description) formData.append('description', description);
+
+        try {
+            const response = await fetch(`${backendUrl}/jobapplications/apply`, {
+                method: 'POST',
+                body: formData,
+                credentials: 'include'  // if your backend needs it
+            });
+            const text = await response.text();
+
+            document.getElementById('applyMessage').textContent = text;
+            document.getElementById('applyMessage').style.color = response.ok ? 'green' : 'red';
+
+            if (response.ok) {
+                document.getElementById('applyForm').reset();
+            }
+        } catch (error) {
+            document.getElementById('applyMessage').textContent = 'Error: ' + error.message;
+            document.getElementById('applyMessage').style.color = 'red';
+        }
+    });
+
+    // Load Applications for a Job
+    document.getElementById('loadApplicationsBtn').addEventListener('click', async function () {
+        const jobId = document.getElementById('viewJobId').value.trim();
+        if (!jobId) {
+            alert("Enter Job ID to load applications");
+            return;
+        }
+
+        try {
+            const res = await fetch(`${backendUrl}/jobapplications/job/${jobId}`, {
+                credentials: 'include'
+            });
+
+            if (!res.ok) {
+                document.getElementById('applicationList').innerHTML = `Error loading applications: ${res.statusText}`;
+                return;
+            }
+
+            const applications = await res.json();
+
+            if (applications.length === 0) {
+                document.getElementById('applicationList').innerHTML = "<p>No applications found.</p>";
+                return;
+            }
+
+            // Build table HTML
+            let html = `<table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Applied At</th>
+            <th>CV</th>
+            <th>Change Status</th>
+          </tr>
+        </thead>
+        <tbody>`;
+
+            applications.forEach(app => {
+                html += `<tr>
+          <td>${app.id || app.applicationId || app.jobApplicationId || app.jobApplicationId}</td>
+          <td>${app.applicantName}</td>
+          <td>${app.applicantEmail}</td>
+          <td>${app.description || ''}</td>
+          <td id="status-${app.id}">${app.status}</td>
+          <td>${app.appliedAt ? new Date(app.appliedAt).toLocaleString() : ''}</td>
+          <td><a href="${backendUrl}/jobapplications/downloadCV/${app.id}" target="_blank">Download CV</a></td>
+          <td>
+            <select id="statusSelect-${app.id}">
+              <option value="PENDING" ${app.status === 'PENDING' ? 'selected' : ''}>Pending</option>
+              <option value="ACCEPTED" ${app.status === 'ACCEPTED' ? 'selected' : ''}>Accepted</option>
+              <option value="REJECTED" ${app.status === 'REJECTED' ? 'selected' : ''}>Rejected</option>
+            </select>
+            <button onclick="updateStatus(${app.id})">Update</button>
+          </td>
+        </tr>`;
+            });
+
+            html += '</tbody></table>';
+
+            document.getElementById('applicationList').innerHTML = html;
+
+        } catch (error) {
+            document.getElementById('applicationList').innerHTML = 'Error: ' + error.message;
+        }
+    });
+
+    // Update application status
+    async function updateStatus(applicationId) {
+        const select = document.getElementById(`statusSelect-${applicationId}`);
+        const newStatus = select.value;
+
+        try {
+            const res = await fetch(`${backendUrl}/jobapplications/updateStatus/${applicationId}?status=${newStatus}`, {
+                method: 'PUT',
+                credentials: 'include'
+            });
+
+            const text = await res.text();
+
+            if (res.ok) {
+                alert(text);
+                // Update status text in table
+                document.getElementById(`status-${applicationId}`).textContent = newStatus;
+            } else {
+                alert("Failed to update status: " + text);
+            }
+        } catch (err) {
+            alert("Error: " + err.message);
+        }
+    }
+</script>
+</body>
+</html>

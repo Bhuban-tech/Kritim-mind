@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Internships & Jobs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+            background: #f9f9f9;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .container {
+            display: flex;
+            gap: 3rem;
+            flex-wrap: wrap;
+        }
+        .list {
+            background: #fff;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgb(0 0 0 / 0.1);
+            flex: 1 1 45%;
+            min-width: 300px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .image-container {
+            flex-shrink: 0;
+        }
+        img {
+            max-width: 120px;
+            max-height: 90px;
+            border-radius: 6px;
+            object-fit: cover;
+            border: 1px solid #ccc;
+        }
+        .details {
+            flex-grow: 1;
+        }
+        .title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+        }
+        .description {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 0.5rem;
+        }
+        button.apply-btn {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
+            background-color: #3498db;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            height: 34px;
+            align-self: flex-start;
+        }
+        button.apply-btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* Modal styles */
+        #applyModal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            padding-top: 60px;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+        #applyModal .modal-content {
+            background-color: #fff;
+            margin: auto;
+            padding: 20px 30px;
+            border-radius: 8px;
+            max-width: 400px;
+            position: relative;
+        }
+        #applyModal h2 {
+            margin-top: 0;
+        }
+        #applyModal label {
+            display: block;
+            margin: 12px 0 6px;
+            font-weight: bold;
+        }
+        #applyModal input[type="text"],
+        #applyModal input[type="email"],
+        #applyModal textarea,
+        #applyModal input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        #applyModal textarea {
+            resize: vertical;
+        }
+        #applyModal button {
+            margin-top: 15px;
+            padding: 8px 15px;
+            background-color: #27ae60;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        #applyModal button:hover {
+            background-color: #1e8449;
+        }
+        #applyModal .close-btn {
+            position: absolute;
+            top: 10px; right: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #999;
+            cursor: pointer;
+        }
+        #applyModal .close-btn:hover {
+            color: #333;
+        }
+        #applyStatus {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Available Internships & Jobs</h1>
+
+<div class="container">
+    <div class="list" id="internshipList">
+        <h2>Internships</h2>
+        <ul></ul>
+    </div>
+
+    <div class="list" id="jobList">
+        <h2>Jobs</h2>
+        <ul></ul>
+    </div>
+</div>
+
+<!-- Application Modal -->
+<div id="applyModal">
+    <div class="modal-content">
+        <span class="close-btn" id="closeModal">&times;</span>
+        <h2 id="modalTitle">Apply</h2>
+        <form id="applyForm">
+            <input type="hidden" id="applyType" name="applyType" /> <!-- "internship" or "job" -->
+            <input type="hidden" id="applyId" name="applyId" />
+
+            <label for="applicantName">Name*</label>
+            <input type="text" id="applicantName" name="applicantName" required />
+
+            <label for="applicantEmail">Email*</label>
+            <input type="email" id="applicantEmail" name="applicantEmail" required />
+
+            <label for="cv">CV (PDF, JPG, PNG)*</label>
+            <input type="file" id="cv" name="cv" accept=".pdf,image/jpeg,image/png" required />
+
+            <label for="description">Description (Optional)</label>
+            <textarea id="description" name="description" rows="3"></textarea>
+
+            <button type="submit">Submit Application</button>
+            <div id="applyStatus"></div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const internshipListEl = document.querySelector("#internshipList ul");
+    const jobListEl = document.querySelector("#jobList ul");
+
+    const applyModal = document.getElementById("applyModal");
+    const closeModalBtn = document.getElementById("closeModal");
+    const applyForm = document.getElementById("applyForm");
+    const modalTitle = document.getElementById("modalTitle");
+    const applyTypeInput = document.getElementById("applyType");
+    const applyIdInput = document.getElementById("applyId");
+    const applyStatusDiv = document.getElementById("applyStatus");
+
+    // Open apply modal with context info
+    function openApplyModal(type, id, title) {
+        modalTitle.textContent = `Apply for ${type === "internship" ? "Internship" : "Job"}: ${title}`;
+        applyTypeInput.value = type;
+        applyIdInput.value = id;
+        applyStatusDiv.textContent = "";
+        applyForm.reset();
+        applyModal.style.display = "block";
+    }
+
+    // Close modal
+    closeModalBtn.onclick = () => {
+        applyModal.style.display = "none";
+    };
+    window.onclick = (event) => {
+        if (event.target === applyModal) {
+            applyModal.style.display = "none";
+        }
+    };
+
+    async function loadInternships() {
+        try {
+            const response = await fetch("http://localhost:8080/internships/all");
+            if (!response.ok) throw new Error("Failed to fetch internships");
+            const internships = await response.json();
+
+            internshipListEl.innerHTML = "";
+            if (internships.length === 0) {
+                internshipListEl.innerHTML = "<li>No internships found.</li>";
+                return;
+            }
+
+            internships.forEach(internship => {
+                const li = document.createElement("li");
+
+                // Internship image URL based on id
+                const imageUrl = `http://localhost:8080/internships/image/${internship.id}`;
+
+                li.innerHTML = `
+                    <div class="image-container">
+                        <img src="${imageUrl}" alt="Internship Image" onerror="this.src='https://via.placeholder.com/120x90?text=No+Image'"/>
+                    </div>
+                    <div class="details">
+                        <div class="title">${internship.serviceName || 'No Title'}</div>
+                        <div class="description">${internship.serviceDescription || 'No description available.'}</div>
+                        <button class="apply-btn" onclick="openApplyModal('internship', ${internship.id}, '${internship.serviceName.replace(/'/g, "\\'")}')">Apply</button>
+                    </div>
+                `;
+                internshipListEl.appendChild(li);
+            });
+        } catch (err) {
+            internshipListEl.innerHTML = `<li>Error loading internships: ${err.message}</li>`;
+        }
+    }
+
+    async function loadJobs() {
+        try {
+            const response = await fetch("http://localhost:8080/jobs/all");
+            if (!response.ok) throw new Error("Failed to fetch jobs");
+            const jobs = await response.json();
+
+            jobListEl.innerHTML = "";
+            if (jobs.length === 0) {
+                jobListEl.innerHTML = "<li>No jobs found.</li>";
+                return;
+            }
+
+            jobs.forEach(job => {
+                const li = document.createElement("li");
+
+                // Job image URL based on id
+                const imageUrl = `http://localhost:8080/jobs/image/${job.id}`;
+
+                li.innerHTML = `
+                    <div class="image-container">
+                        <img src="${imageUrl}" alt="Job Image" onerror="this.src='https://via.placeholder.com/120x90?text=No+Image'"/>
+                    </div>
+                    <div class="details">
+                        <div class="title">${job.serviceName || 'No Title'}</div>
+                        <div class="description">${job.serviceDescription || 'No description available.'}</div>
+                        <button class="apply-btn" onclick="openApplyModal('job', ${job.id}, '${job.serviceName.replace(/'/g, "\\'")}')">Apply</button>
+                    </div>
+                `;
+                jobListEl.appendChild(li);
+            });
+        } catch (err) {
+            jobListEl.innerHTML = `<li>Error loading jobs: ${err.message}</li>`;
+        }
+    }
+
+    // Handle form submission
+    applyForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+        const applicantName = applyForm.applicantName.value.trim();
+        const applicantEmail = applyForm.applicantEmail.value.trim();
+        const cvFile = applyForm.cv.files[0];
+        const description = applyForm.description.value.trim();
+        const type = applyTypeInput.value;
+        const id = applyIdInput.value;
+
+        if (!applicantName || !applicantEmail || !cvFile) {
+            applyStatusDiv.textContent = "Please fill in all required fields.";
+            applyStatusDiv.style.color = "red";
+            return;
+        }
+
+        formData.append("applicantName", applicantName);
+        formData.append("applicantEmail", applicantEmail);
+        formData.append("cv", cvFile);
+        formData.append("description", description);
+
+        if (type === "internship") {
+            formData.append("internshipId", id);
+        } else {
+            formData.append("jobId", id);
+        }
+
+        applyStatusDiv.textContent = "Submitting application...";
+        applyStatusDiv.style.color = "black";
+
+        try {
+            const response = await fetch(`http://localhost:8080/${type}applications/apply`, {
+                method: "POST",
+                body: formData,
+            });
+
+            const text = await response.text();
+
+            if (response.ok) {
+                applyStatusDiv.style.color = "green";
+                applyStatusDiv.textContent = text;
+                applyForm.reset();
+            } else {
+                applyStatusDiv.style.color = "red";
+                applyStatusDiv.textContent = `Error: ${text}`;
+            }
+        } catch (error) {
+            applyStatusDiv.style.color = "red";
+            applyStatusDiv.textContent = `Error submitting application: ${error.message}`;
+        }
+    });
+
+    window.onload = () => {
+        loadInternships();
+        loadJobs();
+    };
+</script>
+
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card:hover {
+            cursor: pointer;
+            transform: scale(1.02);
+            transition: transform 0.2s;
+        }
+        .dashboard-header {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .dashboard-grid {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 50px;
+            flex-wrap: wrap;
+        }
+        .card {
+            width: 300px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="dashboard-header">
+        <h1>Welcome Admin</h1>
+        <p>Select an action below</p>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- Create Internship -->
+        <div class="card text-center" onclick="location.href='create-internship.html'">
+            <div class="card-body">
+                <h5 class="card-title">Create Internship</h5>
+                <p class="card-text">Post internship opportunities for students.</p>
+            </div>
+        </div>
+
+        <!-- Create Job -->
+        <div class="card text-center" onclick="location.href='create-job.html'">
+            <div class="card-body">
+                <h5 class="card-title">Create Job</h5>
+                <p class="card-text">Add new job positions to the portal.</p>
+            </div>
+        </div>
+
+        <!-- Applicants -->
+        <div class="card text-center" onclick="location.href='applicants-dashboard.html'">
+            <div class="card-body">
+                <h5 class="card-title">Applicants</h5>
+                <p class="card-text">View and manage applicants for jobs/internships.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
