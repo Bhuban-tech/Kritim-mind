@@ -2,50 +2,50 @@ package KritimBackend.KritimBackend.dtos;
 
 
 public class TestimonialsDtos {
-    private Integer id;
-    private String name;
-    private String description;
-    private byte[] posterData;
-    private String postedBy;
+    private Integer Id;
+    private String Name;
+    private String Description;
+    private byte[] Image;
+    private String PostedBy;
 
 
     public Integer getId() {
-        return id;
+        return Id;
     }
 
     public void setId(Integer id) {
-        this.id = id;
+        this.Id = id;
     }
 
     public String getName() {
-        return name;
+        return Name;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.Name = name;
     }
 
     public String getDescription() {
-        return description;
+        return Description;
     }
 
     public void setDescription(String description) {
-        this.description = description;
+        this.Description = description;
     }
 
-    public byte[] getPosterData() {
-        return posterData;
+    public byte[] getImage() {
+        return Image;
     }
 
-    public void setPosterData(byte[] posterData) {
-        this.posterData = posterData;
+    public void setImage(byte[] image) {
+        Image = image;
     }
 
     public String getPostedBy() {
-        return postedBy;
+        return PostedBy;
     }
 
     public void setPostedBy(String postedBy) {
-        this.postedBy = postedBy;
+        PostedBy = postedBy;
     }
 }

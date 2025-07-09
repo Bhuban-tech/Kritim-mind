@@ -1,6 +1,7 @@
 package KritimBackend.KritimBackend.controller;
 
 import KritimBackend.KritimBackend.dtos.NoticeDtos;
+import KritimBackend.KritimBackend.model.Roles;
 import KritimBackend.KritimBackend.model.Users;
 import KritimBackend.KritimBackend.repository.UserRepository;
 import KritimBackend.KritimBackend.service.NoticeService;
@@ -38,7 +39,7 @@ public class NoticeController {
             Users user = usersRepo.findById(userId)
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
-            if (!user.getRole().name().equals("Admin")) {
+            if (user.getRole() != Roles.Admin) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Only Admin can add notices");
             }
 
@@ -76,9 +77,7 @@ public class NoticeController {
             Users user = usersRepo.findById(userId)
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
-
-            if (!user.getRole().name().equals("Admin")) {
-
+            if (user.getRole() != Roles.Admin) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
                         .body("Access denied: Only Admin can update notices");
             }
@@ -105,7 +104,7 @@ public class NoticeController {
             Users user = usersRepo.findById(userId)
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
-            if (!user.getRole().name().equals("Admin")) {
+            if (user.getRole() != Roles.Admin) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Only Admin can delete notices");
             }
 

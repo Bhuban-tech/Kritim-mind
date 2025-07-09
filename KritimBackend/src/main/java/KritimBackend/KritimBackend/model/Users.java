@@ -25,10 +25,10 @@ public class Users {
     }
 
     @Column(nullable = false, unique = true)
-    private String email;;
+    private String email;
 
-    @Column(nullable = false)
-    private Long addedBy;
+//    @Column(name = "added_by")
+//    private Long addedBy;
 
     public Users() {
     }
@@ -40,11 +40,11 @@ public class Users {
     @Column(nullable = true)
     private byte[] imageBuffer;
 
-    public Long getUserId() {
+    public Long getId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setId(Long userId) {
         this.userId = userId;
     }
 
@@ -88,11 +88,11 @@ public class Users {
         this.imageBuffer = imageBuffer;
     }
 
-    public Long getAddedBy() {
-        return addedBy;
-    }
-
-    public void setAddedBy(Long addedBy) {
-        this.addedBy = addedBy;
-    }
+//    public Long getAddedBy() {
+//        return addedBy;
+//    }
+//
+//    public void setAddedBy(Long addedBy) {
+//        this.addedBy = addedBy;
+//    }
 }

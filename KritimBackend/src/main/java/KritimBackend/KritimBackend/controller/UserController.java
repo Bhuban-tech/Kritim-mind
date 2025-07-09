@@ -15,7 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping
-@CrossOrigin(origins = "http://127.0.0.1:3000", allowCredentials = "true")
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class UserController {
 
     @Autowired
@@ -24,22 +24,36 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    // ✅ CREATE USER
+
+//    @PostMapping("/create")
+//    public ResponseEntity<String> createUser(@RequestBody Users user) {
+//        if (user.getAddedBy() == null) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("addedBy is required");
+//        }
+//
+//        Users adder = userRepository.findById(user.getAddedBy()).orElse(null);
+//        if (adder == null) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Adder user not found");
+//        }
+//
+//        String role = adder.getRole().toString();
+//        if(role.equals("Admin")){
+//            try {
+//                userServices.createUser(user);
+//                return ResponseEntity.ok("User created successfully");
+//            } catch (ResponseStatusException ex) {
+//                return ResponseEntity.status(ex.getStatusCode()).body(ex.getReason());
+//            } catch (Exception ex) {
+//                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error");
+//            }
+//        }
+//        return  ResponseEntity.status(HttpStatus.FORBIDDEN).body("Forbidden");
+//
+//
+//    }
+
     @PostMapping("/create")
     public ResponseEntity<String> createUser(@RequestBody Users user) {
-        if (user.getAddedBy() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("addedBy is required");
-        }
-
-        Users adder = userRepository.findById(user.getAddedBy()).orElse(null);
-        if (adder == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Adder user not found");
-        }
-
-        if (!"Admin".equals(adder.getRole())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only admins can add users");
-        }
-
         try {
             userServices.createUser(user);
             return ResponseEntity.ok("User created successfully");
@@ -50,13 +64,15 @@ public class UserController {
         }
     }
 
+
+
     // ✅ LOGIN
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody Users users) {
         try {
             Users loggedUser = userServices.login(users);
             Map<String, Object> response = new HashMap<>();
-            response.put("userId", loggedUser.getUserId());
+            response.put("userId", loggedUser.getId());
             response.put("userRole", loggedUser.getRole());
             return ResponseEntity.ok(response);
         } catch (ResponseStatusException ex) {

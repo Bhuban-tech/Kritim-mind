@@ -1,6 +1,7 @@
 package KritimBackend.KritimBackend.controller;
 
 import KritimBackend.KritimBackend.dtos.TestimonialsDtos;
+import KritimBackend.KritimBackend.model.Roles;
 import KritimBackend.KritimBackend.model.Users;
 import KritimBackend.KritimBackend.repository.UserRepository;
 import KritimBackend.KritimBackend.service.CompanyService;
@@ -38,7 +39,7 @@ public class TestimonialsController {
             Users user = usersRepo.findById(userId)
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
-            if (!user.getRole().name().equals("Admin")) {
+            if (user.getRole() != Roles.Admin) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Only Admin can add testimonials");
             }
 
@@ -76,7 +77,7 @@ public class TestimonialsController {
             Users user = usersRepo.findById(userId)
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
-            if (!user.getRole().name().equals("Admin")) {
+            if (user.getRole() != Roles.Admin)  {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Only Admin can update testimonials");
             }
 
@@ -102,7 +103,7 @@ public class TestimonialsController {
             Users user = usersRepo.findById(userId)
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
-            if (!user.getRole().name().equals("Admin")) {
+            if (user.getRole() != Roles.Admin) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Only Admin can delete testimonials");
             }
 

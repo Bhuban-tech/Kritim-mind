@@ -1,8 +1,6 @@
 package KritimBackend.KritimBackend.model;
 
 
-import KritimBackend.KritimBackend.model.NoticeType;
-import KritimBackend.KritimBackend.model.Users;
 import jakarta.persistence.*;
 
 
@@ -12,93 +10,82 @@ import java.sql.Timestamp;
 public class Notices {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long noticeId;
+    private Long Id;
 
-    @Column(nullable = false)
-    private String noticeTitle;
+    @Column(nullable = true)
+    private String Title;
 
     public Notices() {
     }
 
-    public Notices(Long noticeId, String noticeTitle, String noticeDescription, Timestamp createAt, byte[] noticeImage, Users noticePublisher) {
-        this.noticeId = noticeId;
-        this.noticeTitle = noticeTitle;
-        this.noticeDescription = noticeDescription;
-        this.createAt = createAt;
-        this.noticeImage = noticeImage;
-        this.noticePublisher = noticePublisher;
-    }
-
+    @Column(nullable = true)
+    private String Description;
     @Column(nullable = false)
-    private String noticeDescription;
-    @Column(nullable = false)
-    private Timestamp createAt;
+    private Timestamp createdAt;
     @Lob
-    @Column(name="notice_image", nullable=false, columnDefinition="MEDIUMBLOB")
-    private byte[] noticeImage;
+    @Column(name = "NoticeImage", nullable = false, columnDefinition = "MEDIUMBLOB")
+    private byte[] Image;
 
     @ManyToOne
     @JoinColumn(name = "userId", referencedColumnName = "userId")
-    private Users noticePublisher;
+    private Users Publisher;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private NoticeType noticeType;
 
-    public NoticeType getNoticeType() {
-        return noticeType;
+    public Notices(Long Id, String Title, String Description, Timestamp createdAt, byte[] Image, Users Publisher) {
+        this.Id = Id;
+        this.Title = Title;
+        this.Description = Description;
+        this.createdAt = createdAt;
+        this.Image = Image;
+        this.Publisher = Publisher;
     }
 
-    public void setNoticeType(NoticeType noticeType) {
-        this.noticeType = noticeType;
+    public Long getId() {
+        return Id;
     }
 
-
-    public Long getNoticeId() {
-        return noticeId;
+    public void setId(Long id) {
+        Id = id;
     }
 
-    public void setNoticeId(Long noticeId) {
-        this.noticeId = noticeId;
+    public String getTitle() {
+        return Title;
     }
 
-    public String getNoticeTitle() {
-        return noticeTitle;
+    public void setTitle(String title) {
+        Title = title;
     }
 
-    public void setNoticeTitle(String noticeTitle) {
-        this.noticeTitle = noticeTitle;
+    public String getDescription() {
+        return Description;
     }
 
-    public String getNoticeDescription() {
-        return noticeDescription;
+    public void setDescription(String description) {
+        Description = description;
     }
 
-    public void setNoticeDescription(String noticeDescription) {
-        this.noticeDescription = noticeDescription;
+    public Timestamp getCreatedAt() {
+        return createdAt;
     }
 
-    public Timestamp getCreateAt() {
-        return createAt;
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public void setCreateAt(Timestamp createAt) {
-        this.createAt = createAt;
+    public byte[] getImage() {
+        return Image;
     }
 
-    public byte[] getNoticeImage() {
-        return noticeImage;
+    public void setImage(byte[] image) {
+        Image = image;
     }
 
-    public void setNoticeImage(byte[] noticeImage) {
-        this.noticeImage = noticeImage;
+    public Users getPublisher() {
+        return Publisher;
     }
 
-    public Users getNoticePublisher() {
-        return noticePublisher;
-    }
-
-    public void setNoticePublisher(Users noticePublisher) {
-        this.noticePublisher = noticePublisher;
+    public void setPublisher(Users publisher) {
+        Publisher = publisher;
     }
 }
+

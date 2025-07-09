@@ -1,7 +1,8 @@
 package KritimBackend.KritimBackend.service;
 
 import KritimBackend.KritimBackend.dtos.TestimonialsDtos;
-import KritimBackend.KritimBackend.model.TestimonialsEntity;
+import KritimBackend.KritimBackend.model.Roles;
+import KritimBackend.KritimBackend.model.Testimonials;
 import KritimBackend.KritimBackend.model.Users;
 import KritimBackend.KritimBackend.repository.TestimonialsRepo;
 import KritimBackend.KritimBackend.repository.UserRepository;
@@ -29,18 +30,18 @@ public class TestimonialsServiceImpl implements CompanyService {
         Users user = userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!user.getRole().name().equals("Admin")) {
+        if (user.getRole() != Roles.Admin)  {
             throw new RuntimeException("Only admins are allowed to create testimonials.");
         }
 
-        TestimonialsEntity entity = convertDtoToEntity(dto);
+        Testimonials entity = convertDtoToEntity(dto);
         entity.setUser(user);
 
         if (file != null && !file.isEmpty()) {
-            entity.setPosterData(file.getBytes());
+            entity.setImage(file.getBytes());
         }
 
-        TestimonialsEntity savedEntity = testimonialRepository.save(entity);
+        Testimonials savedEntity = testimonialRepository.save(entity);
         return convertEntityToDto(savedEntity);
     }
 
@@ -64,23 +65,23 @@ public class TestimonialsServiceImpl implements CompanyService {
         Users user = userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!user.getRole().name().equals("Admin")) {
+        if (user.getRole() != Roles.Admin) {
             throw new RuntimeException("Only admins are allowed to update testimonials.");
         }
 
-        Optional<TestimonialsEntity> optional = testimonialRepository.findById(dto.getId());
+        Optional<Testimonials> optional = testimonialRepository.findById(dto.getId());
         if (optional.isEmpty()) return null;
 
-        TestimonialsEntity entity = optional.get();
+        Testimonials entity = optional.get();
         entity.setName(dto.getName());
         entity.setDescription(dto.getDescription());
 
         if (file != null && !file.isEmpty()) {
-            entity.setPosterData(file.getBytes());
+            entity.setImage(file.getBytes());
         }
         entity.setUser(user);
 
-        TestimonialsEntity updated = testimonialRepository.save(entity);
+        Testimonials updated = testimonialRepository.save(entity);
         return convertEntityToDto(updated);
     }
 
@@ -93,23 +94,23 @@ public class TestimonialsServiceImpl implements CompanyService {
         return false;
     }
 
-    private TestimonialsEntity convertDtoToEntity(TestimonialsDtos dto) {
-        TestimonialsEntity entity = new TestimonialsEntity();
+    private Testimonials convertDtoToEntity(TestimonialsDtos dto) {
+        Testimonials entity = new Testimonials();
         if(dto.getId() != null) {
             entity.setId(dto.getId());
         }
         entity.setName(dto.getName());
         entity.setDescription(dto.getDescription());
-        entity.setPosterData(dto.getPosterData());
+        entity.setImage(dto.getImage());
         return entity;
     }
 
-    private TestimonialsDtos convertEntityToDto(TestimonialsEntity entity) {
+    private TestimonialsDtos convertEntityToDto(Testimonials entity) {
         TestimonialsDtos dto = new TestimonialsDtos();
         dto.setId(entity.getId());
         dto.setName(entity.getName());
         dto.setDescription(entity.getDescription());
-        dto.setPosterData(entity.getPosterData());
+        dto.setImage(entity.getImage());
         if(entity.getUser() != null) {
             dto.setPostedBy(entity.getUser().getUsername());
         }

@@ -3,54 +3,47 @@ package KritimBackend.KritimBackend.dtos;
 import java.sql.Timestamp;
 
 public class NoticeDtos {
-    private Long id;
-    private String title;
-    private String description;
+    private Long Id;
+    private String Title;
+    private String Description;
     private Timestamp createdAt;
     private String postedByName;
     private Long postedById;
-    private byte[] noticeImage;
+    private byte[] Image;
 
-    private String noticeType;
 
-    public String getNoticeType() {
-        return noticeType;
-    }
 
-    public void setNoticeType(String noticeType) {
-        this.noticeType = noticeType;
-    }
 
 
     public Long getId() {
-        return id;
+        return Id;
     }
 
     public void setId(Long id) {     // Long
-        this.id = id;
+        this.Id = id;
     }
 
     public String getTitle() {
-        return title;
+        return Title;
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.Title = title;
     }
 
     public String getDescription() {
-        return description;
+        return Description;
     }
 
     public void setDescription(String description) {
-        this.description = description;
+        this.Description = description;
     }
 
-    public Timestamp getCreated_at() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreated_at(Timestamp createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -70,11 +63,11 @@ public class NoticeDtos {
         this.postedById = postedById;
     }
 
-    public byte[] getNoticeImage() {
-        return noticeImage;
+    public byte[] getImage() {
+        return Image;
     }
 
-    public void setNoticeImage(byte[] noticeImage) {
-        this.noticeImage = noticeImage;
+    public void setImage(byte[] noticeImage) {
+        this.Image = noticeImage;
     }
 }

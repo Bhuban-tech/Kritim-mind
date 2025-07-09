@@ -1,9 +1,9 @@
 package KritimBackend.KritimBackend.service;
 
 import KritimBackend.KritimBackend.dtos.NoticeDtos;
-import KritimBackend.KritimBackend.model.NoticeType;
 import KritimBackend.KritimBackend.model.Notices;
 import KritimBackend.KritimBackend.model.Users;
+import KritimBackend.KritimBackend.model.Roles;  // enum import
 import KritimBackend.KritimBackend.repository.NoticeRepo;
 import KritimBackend.KritimBackend.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,16 +31,16 @@ public class NoticeServiceImpl implements NoticeService {
         Users user = userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!user.getRole().name().equals("Admin")) {
+        if (user.getRole() != Roles.Admin) {
             throw new RuntimeException("Only admins are allowed to create notices.");
         }
 
         Notices entity = convertDtoToEntity(dto);
-        entity.setNoticePublisher(user);
-        entity.setCreateAt(new Timestamp(System.currentTimeMillis()));
+        entity.setPublisher(user);
+        entity.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 
         if (file != null && !file.isEmpty()) {
-            entity.setNoticeImage(file.getBytes());
+            entity.setImage(file.getBytes());
         }
 
         Notices savedEntity = noticeRepo.save(entity);
@@ -68,7 +67,7 @@ public class NoticeServiceImpl implements NoticeService {
         Users user = userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!user.getRole().name().equals("Admin")) {
+        if (user.getRole() != Roles.Admin) {
             throw new RuntimeException("Only admins are allowed to update notices.");
         }
 
@@ -76,25 +75,14 @@ public class NoticeServiceImpl implements NoticeService {
         if (optional.isEmpty()) return null;
 
         Notices entity = optional.get();
-        entity.setNoticeTitle(dto.getTitle());
-        entity.setNoticeDescription(dto.getDescription());
+        entity.setTitle(dto.getTitle());
+        entity.setDescription(dto.getDescription());
 
         if (file != null && !file.isEmpty()) {
-            entity.setNoticeImage(file.getBytes());
+            entity.setImage(file.getBytes());
         }
 
-        if (dto.getNoticeType() != null) {
-            try {
-                String raw = dto.getNoticeType();
-                String normalized = raw.substring(0, 1).toUpperCase() + raw.substring(1).toLowerCase();
-                entity.setNoticeType(NoticeType.valueOf(normalized));
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Invalid noticeType. Must be one of: " +
-                        Arrays.toString(NoticeType.values()));
-            }
-        }
-
-        entity.setNoticePublisher(user);
+        entity.setPublisher(user);
 
         Notices updated = noticeRepo.save(entity);
         return convertEntityToDto(updated);
@@ -105,7 +93,7 @@ public class NoticeServiceImpl implements NoticeService {
         Users user = userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!user.getRole().name().equals("Admin")) {
+        if (user.getRole() != Roles.Admin) {
             throw new RuntimeException("Only admins are allowed to delete notices.");
         }
 
@@ -118,40 +106,26 @@ public class NoticeServiceImpl implements NoticeService {
 
     private Notices convertDtoToEntity(NoticeDtos dto) {
         Notices entity = new Notices();
-        entity.setNoticeId(dto.getId());
-        entity.setNoticeTitle(dto.getTitle());
-        entity.setNoticeDescription(dto.getDescription());
-        entity.setNoticeImage(dto.getNoticeImage());
-        entity.setCreateAt(dto.getCreated_at());
-
-        if (dto.getNoticeType() != null) {
-            try {
-                String raw = dto.getNoticeType();
-                String normalized = raw.substring(0, 1).toUpperCase() + raw.substring(1).toLowerCase();
-                entity.setNoticeType(NoticeType.valueOf(normalized));
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Invalid noticeType. Must be one of: " +
-                        Arrays.toString(NoticeType.values()));
-            }
-        }
-
+        entity.setId(dto.getId());
+        entity.setTitle(dto.getTitle());
+        entity.setDescription(dto.getDescription());
+        entity.setImage(dto.getImage());
+        entity.setCreatedAt(dto.getCreatedAt());
         return entity;
     }
 
     private NoticeDtos convertEntityToDto(Notices entity) {
         NoticeDtos dto = new NoticeDtos();
-        dto.setId(entity.getNoticeId());
-        dto.setTitle(entity.getNoticeTitle());
-        dto.setDescription(entity.getNoticeDescription());
-        dto.setNoticeImage(entity.getNoticeImage());
-        dto.setCreated_at(entity.getCreateAt());
-        dto.setNoticeType(entity.getNoticeType().name());
+        dto.setId(entity.getId());
+        dto.setTitle(entity.getTitle());
+        dto.setDescription(entity.getDescription());
+        dto.setImage(entity.getImage());
+        dto.setCreatedAt(entity.getCreatedAt());
 
-        if (entity.getNoticePublisher() != null) {
-            dto.setPostedBy(entity.getNoticePublisher().getUsername());
-            dto.setPostedById(entity.getNoticePublisher().getUserId());
+        if (entity.getPublisher() != null) {
+            dto.setPostedBy(entity.getPublisher().getUsername());
+            dto.setPostedById(entity.getPublisher().getId());
         }
-
         return dto;
     }
 }

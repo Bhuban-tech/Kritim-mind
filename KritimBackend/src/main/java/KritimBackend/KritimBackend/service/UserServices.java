@@ -22,6 +22,7 @@ public class UserServices {
     public void createUser(Users users) {
         // Check if email already exists
         if (userRepo.findByEmail(users.getEmail()).isPresent()) {
+
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User already registered");
         }
 
@@ -38,6 +39,8 @@ public class UserServices {
         Users existingUser = userRepo.findByEmail(users.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
+
+
         // Check password match
         if (!passwordEncoder.matches(users.getPassword(), existingUser.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
@@ -45,4 +48,5 @@ public class UserServices {
 
         return existingUser;
     }
+
 }
