@@ -11,13 +11,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping
 @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
-
 public class UserController {
 
     @Autowired
@@ -97,16 +95,21 @@ public class UserController {
         existingUser.setEmail(updatedUser.getEmail());
         existingUser.setPassword(updatedUser.getPassword());
         existingUser.setImageBuffer(updatedUser.getImageBuffer());
-        existingUser.setUser_designation(updatedUser.getUser_designation());
-
 
         userRepository.save(existingUser);
         return ResponseEntity.ok("User updated successfully");
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<Users>> getUsers(){
-        return ResponseEntity.ok(userRepository.findAll());
+    public ResponseEntity<Users> getUsers(Long id){
+
+        try {
+            Users users = userRepository.findAll().iterator().next();
+            return ResponseEntity.ok(users);
+        }
+        catch (RuntimeException ex) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
+        }
     }
 
     @GetMapping("/users/{id}")
