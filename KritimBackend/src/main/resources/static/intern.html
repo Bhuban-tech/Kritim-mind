@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Internship Listings & Apply</title>
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+    />
+    <style>
+        .card {
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body class="bg-light p-4">
+<div class="container">
+    <h2 class="mb-4 text-center">Available Internships</h2>
+
+    <div id="internshipList" class="row"></div>
+
+    <!-- Apply Modal -->
+    <div
+            class="modal fade"
+            id="applyModal"
+            tabindex="-1"
+            aria-labelledby="applyModalLabel"
+            aria-hidden="true"
+    >
+        <div class="modal-dialog">
+            <form id="applyForm" class="modal-content" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="applyModalLabel">Apply for Internship</h5>
+                    <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                    ></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="internshipId" name="internshipId" />
+
+                    <div class="mb-3">
+                        <label for="applicantName" class="form-label">Name</label>
+                        <input
+                                type="text"
+                                class="form-control"
+                                id="applicantName"
+                                name="applicantName"
+                                required
+                        />
+                    </div>
+                    <div class="mb-3">
+                        <label for="applicantEmail" class="form-label">Email</label>
+                        <input
+                                type="email"
+                                class="form-control"
+                                id="applicantEmail"
+                                name="applicantEmail"
+                                required
+                        />
+                    </div>
+                    <div class="mb-3">
+                        <label for="cv" class="form-label">Upload CV (PDF, PNG, JPEG)</label>
+                        <input
+                                type="file"
+                                class="form-control"
+                                id="cv"
+                                name="cv"
+                                accept=".pdf,image/png,image/jpeg"
+                                required
+                        />
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label"
+                        >Additional Description (optional)</label
+                        >
+                        <textarea
+                                class="form-control"
+                                id="description"
+                                name="description"
+                                rows="3"
+                        ></textarea>
+                    </div>
+                    <div id="applyFeedback" class="text-danger"></div>
+                </div>
+                <div class="modal-footer">
+                    <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal"
+                    >
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">Submit Application</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+></script>
+<script>
+    const internshipList = document.getElementById("internshipList");
+    const applyModal = new bootstrap.Modal(document.getElementById("applyModal"));
+    const applyForm = document.getElementById("applyForm");
+    const applyFeedback = document.getElementById("applyFeedback");
+
+    // Load internships from backend
+    async function loadInternships() {
+        try {
+            const res = await fetch("http://localhost:8080/internships/all");
+            if (!res.ok) throw new Error("Failed to fetch internships");
+            const internships = await res.json();
+
+            internshipList.innerHTML = internships.length
+                ? internships
+                    .map(
+                        (internship) => `
+          <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title">${internship.serviceName}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">${internship.post}</h6>
+                <p class="card-text">${internship.serviceDescription}</p>
+                <p><strong>Salary:</strong> $${internship.salary.toFixed(2)}</p>
+                <button class="btn btn-primary" onclick="openApplyModal(${internship.internshipId})">
+                  Apply Now
+                </button>
+              </div>
+            </div>
+          </div>`
+                    )
+                    .join("")
+                : `<p class="text-center">No internships available at the moment.</p>`;
+        } catch (err) {
+            internshipList.innerHTML =
+                `<p class="text-danger text-center">Error loading internships: ${err.message}</p>`;
+        }
+    }
+
+    // Open apply modal and set internshipId hidden field
+    function openApplyModal(internshipId) {
+        applyForm.reset();
+        applyFeedback.textContent = "";
+        document.getElementById("internshipId").value = internshipId;
+        applyModal.show();
+    }
+
+    // Handle form submit
+    applyForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        applyFeedback.textContent = "";
+
+        const formData = new FormData(applyForm);
+        // userId if you want to send it, add here:
+        // formData.append('userId', YOUR_USER_ID_HERE);
+
+        try {
+            const res = await fetch("http://localhost:8080/internapplications/apply", {
+                method: "POST",
+                body: formData,
+            });
+
+            const text = await res.text();
+            if (res.ok) {
+                applyFeedback.style.color = "green";
+                applyFeedback.textContent = text;
+                applyForm.reset();
+                setTimeout(() => applyModal.hide(), 1500);
+            } else {
+                applyFeedback.style.color = "red";
+                applyFeedback.textContent = text;
+            }
+        } catch (err) {
+            applyFeedback.style.color = "red";
+            applyFeedback.textContent = "Error submitting application: " + err.message;
+        }
+    });
+
+    // Load internships on page load
+    loadInternships();
+</script>
+</body>
+</html>
