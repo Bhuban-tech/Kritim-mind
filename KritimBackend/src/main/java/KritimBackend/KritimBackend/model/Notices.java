@@ -1,23 +1,14 @@
 package KritimBackend.KritimBackend.model;
 
-<<<<<<< HEAD
 
 import KritimBackend.KritimBackend.model.NoticeType;
 import KritimBackend.KritimBackend.model.Users;
 import jakarta.persistence.*;
 
-=======
-import jakarta.persistence.*;
-import lombok.Data;
->>>>>>> hiyang
 
 import java.sql.Timestamp;
 
 @Entity
-<<<<<<< HEAD
-=======
-@Data
->>>>>>> hiyang
 public class Notices {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,20 +33,14 @@ public class Notices {
     private String noticeDescription;
     @Column(nullable = false)
     private Timestamp createAt;
-<<<<<<< HEAD
     @Lob
     @Column(name="notice_image", nullable=false, columnDefinition="MEDIUMBLOB")
-=======
-    @Column(nullable = false)
-    @Lob
->>>>>>> hiyang
     private byte[] noticeImage;
 
     @ManyToOne
     @JoinColumn(name = "userId", referencedColumnName = "userId")
     private Users noticePublisher;
 
-<<<<<<< HEAD
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private NoticeType noticeType;
@@ -117,7 +102,3 @@ public class Notices {
         this.noticePublisher = noticePublisher;
     }
 };
-=======
-
-}
->>>>>>> hiyang
