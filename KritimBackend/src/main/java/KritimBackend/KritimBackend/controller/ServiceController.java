@@ -42,21 +42,22 @@ public class ServiceController {
     @PostMapping("/create")
     public ResponseEntity<String> createService(
             @ModelAttribute ServiceDTO dto,
-            @RequestParam("userId") Long userId,
-            @RequestParam("role") String role
+            @RequestParam("userId") Long userId
     ) throws IOException {
-        if (!role.equalsIgnoreCase("Admin")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only Admin can perform this action");
-        }
-
         Users user = userService.getUserById(userId);
+
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid user ID");
+        }
+
+        if (user.getRole() != Roles.Admin) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only Admin can perform this action");
         }
 
         servicesService.createService(dto, user);
         return ResponseEntity.ok("Service created successfully");
     }
+
 
     // Get all services
     @GetMapping("/all")
@@ -120,20 +121,21 @@ public class ServiceController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteService(
             @PathVariable Long id,
-            @RequestParam("userId") Long userId,
-            @RequestParam("role") String role
+            @RequestParam("userId") Long userId
     ) {
-        if (!role.equalsIgnoreCase("Admin")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only Admin can perform this action");
-        }
-
         Users user = userService.getUserById(userId);
+
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid user ID");
+        }
+
+        if (user.getRole() != Roles.Admin) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only Admin can perform this action");
         }
 
         servicesService.deleteById(id);
         return ResponseEntity.ok("Service deleted successfully");
     }
+
 
 }
