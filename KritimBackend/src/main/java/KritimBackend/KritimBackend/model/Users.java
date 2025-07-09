@@ -16,17 +16,13 @@ public class Users {
     private String username;
 
     @Column(nullable = false)
-    private String userDesignation;
-
-
-    @Column(nullable = false)
     private String password;
 
     @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
-    private String designation;
+    private String user_designation;
 
     @Column(nullable = false)
     private Long addedBy;
@@ -35,15 +31,16 @@ public class Users {
     private Roles role;
 
     @Lob
-    @Column(nullable = true)
+    @Column(name = "image_buffer", nullable = true, columnDefinition = "MEDIUMBLOB")
     private byte[] imageBuffer;
 
     public Users() {
     }
 
-    public Users(Long userId, String userDesignation, String username, String password, String email, Roles role, byte[] imageBuffer) {
+    public Users(Long userId, String user_designation, String username,long addedBy, String password, String email, Roles role, byte[] imageBuffer) {
         this.userId = userId;
-        this.userDesignation= userDesignation;
+        this.user_designation = user_designation;
+        this.addedBy = addedBy;
         this.username = username;
         this.password = password;
         this.email = email;
