@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Vacancy Listings</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7fc; }
+        h1 { text-align: center; margin-top: 2rem; color: #333; }
+        #vacancyContainer {
+            max-width: 1000px;
+            margin: 2rem auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 0 1rem;
+        }
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 1.2rem;
+            transition: transform 0.2s ease;
+            position: relative;
+        }
+        .card:hover { transform: translateY(-5px); }
+        .card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        .card h3 { margin: 0 0 0.5rem; color: #007BFF; }
+        .card p { color: #555; margin: 0.3rem 0; font-size: 0.95rem; }
+        .card button {
+            margin-top: auto;
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s ease;
+        }
+        .card button:hover { background-color: #0056b3; }
+        .no-vacancies {
+            text-align: center;
+            margin-top: 3rem;
+            font-size: 1.2rem;
+            color: #666;
+        }
+        /* Form styles */
+        #applicationFormContainer {
+            max-width: 600px;
+            margin: 2rem auto;
+            background: #fff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        #applicationFormContainer h2 {
+            margin-top: 0;
+            color: #007BFF;
+        }
+        #applicationFormContainer label {
+            display: block;
+            margin: 0.8rem 0 0.3rem;
+            font-weight: 600;
+        }
+        #applicationFormContainer input[type="text"],
+        #applicationFormContainer input[type="email"],
+        #applicationFormContainer input[type="file"] {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+        }
+        #applicationFormContainer button {
+            margin-top: 1.2rem;
+            background-color: #007BFF;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s ease;
+        }
+        #applicationFormContainer button:hover {
+            background-color: #0056b3;
+        }
+        #formMessage {
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+<h1>Available Job Vacancies</h1>
+<div id="vacancyContainer"></div>
+
+<div id="applicationFormContainer" style="display:none;">
+    <h2>Apply for Job</h2>
+    <form id="applicationForm" enctype="multipart/form-data">
+        <input type="hidden" name="vacancyId" id="vacancyId" />
+        <label for="applicantName">Name:</label>
+        <input type="text" id="applicantName" name="applicantName" required />
+
+        <label for="applicantEmail">Email:</label>
+        <input type="email" id="applicantEmail" name="applicantEmail" required />
+
+        <label for="applicantCV">Upload CV (PDF, PNG, JPEG):</label>
+        <input type="file" id="applicantCV" name="applicantCV" accept=".pdf,.png,.jpg,.jpeg,image/*" required />
+
+        <button type="submit">Submit Application</button>
+    </form>
+    <div id="formMessage"></div>
+</div>
+
+<script>
+    async function fetchVacancies() {
+        try {
+            const response = await fetch('http://localhost:8080/vacancies/allvacancy');
+            if (!response.ok) throw new Error('Failed to fetch vacancies');
+
+            const vacancies = await response.json();
+
+            const container = document.getElementById('vacancyContainer');
+            container.innerHTML = '';
+
+            if (vacancies.length === 0) {
+                container.innerHTML = "<p class='no-vacancies'>No vacancies available at the moment.</p>";
+                return;
+            }
+
+            vacancies.forEach(vacancy => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+
+                const imageUrl = `http://localhost:8080/vacancies/image/${vacancy.vacancyId}`;
+
+                card.innerHTML = `
+                    <img src="${imageUrl}" alt="Vacancy Image" onerror="this.onerror=null;this.src='placeholder.png';" />
+                    <h3>${vacancy.serviceName}</h3>
+                    <p><strong>Description:</strong> ${vacancy.serviceDescription}</p>
+                    <p><strong>Posted At:</strong> ${new Date(vacancy.postedAt).toLocaleString()}</p>
+                    <button onclick="showApplicationForm(${vacancy.vacancyId})">Apply Now</button>
+                `;
+
+                container.appendChild(card);
+            });
+
+        } catch (err) {
+            console.error("Error fetching vacancies:", err);
+            document.getElementById('vacancyContainer').innerHTML = "<p class='no-vacancies'>Failed to load vacancies.</p>";
+        }
+    }
+
+    function showApplicationForm(vacancyId) {
+        // Show form and set vacancyId input
+        document.getElementById('vacancyId').value = vacancyId;
+        document.getElementById('applicationFormContainer').scrollIntoView({behavior: 'smooth'});
+        document.getElementById('applicationFormContainer').style.display = 'block';
+        document.getElementById('formMessage').innerText = '';
+    }
+
+    document.getElementById('applicationForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch('http://localhost:8080/applications/apply', {
+                method: 'POST',
+                body: formData,
+                credentials: 'include' // to send cookies if your backend uses sessions
+            });
+
+            const text = await response.text();
+
+            if (response.ok) {
+                document.getElementById('formMessage').style.color = 'green';
+                form.reset();
+            } else {
+                document.getElementById('formMessage').style.color = 'red';
+            }
+            document.getElementById('formMessage').innerText = text;
+
+        } catch (err) {
+            document.getElementById('formMessage').style.color = 'red';
+            document.getElementById('formMessage').innerText = 'Failed to submit application. Please try again.';
+            console.error(err);
+        }
+    });
+
+    fetchVacancies();
+</script>
+</body>
+</html>
