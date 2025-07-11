@@ -23,7 +23,6 @@ public class ServicesService {
 
             if (dto.getImageFile() != null && !dto.getImageFile().isEmpty()) {
                 service.setImageData(dto.getImageFile().getBytes());
-                service.setImageType(dto.getImageFile().getContentType());
             }
 
             service.setUsers(users);
@@ -38,7 +37,13 @@ public class ServicesService {
             return serviceRepository.findById(id);
         }
 
-        public void updateService(Long id, ServiceDTO dto) throws IOException {
+        public byte[] getImageById(Long id) {
+        Optional<Services> serviceOpt = serviceRepository.findById(id);
+        return serviceOpt.map(Services::getImageData).orElse(null);
+        }
+
+
+    public void updateService(Long id, ServiceDTO dto) throws IOException {
             Optional<Services> serviceOpt = getById(id);
             if (serviceOpt.isPresent()) {
                 Services service = serviceOpt.get();
@@ -46,7 +51,6 @@ public class ServicesService {
                 service.setServiceDescription(dto.getServiceDescription());
                 if (dto.getImageFile() != null && !dto.getImageFile().isEmpty()) {
                     service.setImageData(dto.getImageFile().getBytes());
-                    service.setImageType(dto.getImageFile().getContentType());
                 }
                 serviceRepository.save(service);
             }

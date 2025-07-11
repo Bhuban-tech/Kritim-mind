@@ -7,8 +7,11 @@ import KritimBackend.KritimBackend.model.Users;
 import KritimBackend.KritimBackend.service.ServicesService;
 import KritimBackend.KritimBackend.service.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import java.io.IOException;
+
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,13 +31,17 @@ public class ServiceController {
     private UserServices userService;
 
     // Create a new service
-    @PostMapping("/create")
+    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> createService(
-            @ModelAttribute ServiceDTO dto,
-            @RequestParam("userId") Long userId
+            @ModelAttribute ServiceDTO dto
     ) throws IOException {
-        Users user = userService.getUserById(userId);
+        Long userId = dto.getUserId();
 
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User ID is missing");
+        }
+
+        Users user = userService.getUserById(userId);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid user ID");
         }
@@ -46,6 +53,7 @@ public class ServiceController {
         servicesService.createService(dto, user);
         return ResponseEntity.ok("Service created successfully");
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<ServiceDTO> getServiceById(@PathVariable Long id) {
@@ -59,7 +67,6 @@ public class ServiceController {
         dto.setServiceId(service.getServiceId());
         dto.setServiceName(service.getServiceName());
         dto.setServiceDescription(service.getServiceDescription());
-        dto.setImageType(service.getImageType());
 
         if (service.getImageData() != null) {
             dto.setImageData(service.getImageData());
@@ -82,7 +89,6 @@ public class ServiceController {
             dto.setServiceId(service.getServiceId());
             dto.setServiceName(service.getServiceName());
             dto.setServiceDescription(service.getServiceDescription());
-            dto.setImageType(service.getImageType());
 
             if (service.getImageData() != null) {
                 dto.setImageData(service.getImageData());
@@ -99,29 +105,34 @@ public class ServiceController {
     // Get image byte data
     @GetMapping("/image/{id}")
     public ResponseEntity<byte[]> getImage(@PathVariable Long id) {
-        Optional<Services> optional = servicesService.getById(id);
-        if (optional.isPresent()) {
-            Services service = optional.get();
-            return ResponseEntity.ok()
-                    .header("Content-Type", service.getImageType() != null ? service.getImageType() : "image/jpeg")
-                    .body(service.getImageData());
+        byte[] image = servicesService.getImageById(id);
+        if (image != null) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.IMAGE_JPEG); // or PNG, depending on your image type
+            return new ResponseEntity<>(image, headers, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.notFound().build();
     }
 
+
     // Update service
-    @PutMapping("/update/{id}")
+    @PutMapping(value = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateService(
             @PathVariable Long id,
-            @ModelAttribute ServiceDTO dto) throws IOException {
-        if (dto.getUserId() == null) {
+            @ModelAttribute ServiceDTO dto
+    ) throws IOException {
+        Long userId = dto.getUserId();
+
+        if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User ID is missing");
         }
 
-        Users user = userService.getUserById(dto.getUserId());
+        Users user = userService.getUserById(userId);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
+
         if (user.getRole() != Roles.Admin) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only Admin can perform this action");
         }
@@ -129,6 +140,7 @@ public class ServiceController {
         servicesService.updateService(id, dto);
         return ResponseEntity.ok("Service updated successfully");
     }
+
 
     // Delete service
     @DeleteMapping("/delete/{id}")

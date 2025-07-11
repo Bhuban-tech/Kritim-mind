@@ -24,6 +24,17 @@ public class InternApplicationController {
     @Autowired
     private InternshipRepository internshipRepository;
 
+    @DeleteMapping("/del/{id}")
+    public ResponseEntity<String> deleteInternApplication(@PathVariable Long id){
+        internApplicationRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
+    @DeleteMapping("/deleteall")
+    public ResponseEntity<String> deleteAllInternApplications(){
+        internApplicationRepository.deleteAll();
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/apply")
     public ResponseEntity<String> applyForInternship(
             @RequestParam("applicantName") String applicantName,
@@ -76,6 +87,14 @@ public class InternApplicationController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
+    }
+    @GetMapping("/all")
+    public ResponseEntity<List<InternApplication>> getAllInternApplications() {
+        List<InternApplication> internApplications = internApplicationRepository.findAll();
+        if (internApplications.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(internApplications);
     }
 
     @GetMapping("/internship/{internshipId}")

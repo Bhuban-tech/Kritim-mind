@@ -10,8 +10,10 @@ public class
 ServiceDTO {
     @JsonProperty("ServiceId")
     private Long ServiceId;                    // for update/edit purposes
+
     @JsonProperty("ServiceName")
     private String ServiceName;
+
     @JsonProperty("ServiceDescription")
     private String ServiceDescription;
 
@@ -19,9 +21,6 @@ ServiceDTO {
     private MultipartFile ImageFile;          // used only during upload (ignored in JSON response)
     @JsonProperty("ImageData")
     private byte[] ImageData;                 // actual stored image data
-
-    @JsonProperty("ImageType")
-    private String ImageType;                 // e.g., "image/png"
 
     @JsonProperty("ImageBase64")
     private String ImageBase64;               // for frontend rendering

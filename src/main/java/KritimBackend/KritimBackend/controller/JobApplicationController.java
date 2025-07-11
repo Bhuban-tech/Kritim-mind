@@ -26,6 +26,25 @@ public class JobApplicationController {
     @Autowired
     private JobsRepository jobsRepository;
 
+    @DeleteMapping("/del/{id}")
+    public ResponseEntity<JobApplication> deleteJobApplicationById(@PathVariable Long id){
+        jobApplicationRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
+    @DeleteMapping("/deleteall")
+    public ResponseEntity<JobApplication> deleteAllJobApplications(){
+        jobApplicationRepository.deleteAll();
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<JobApplication>> getAllJobApplications() {
+        List<JobApplication> jobApplications = jobApplicationRepository.findAll();
+        if(jobApplications.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(jobApplications);
+    }
     @PostMapping("/apply")
     public ResponseEntity<String> applyForJob(
             @RequestParam("applicantName") String applicantName,

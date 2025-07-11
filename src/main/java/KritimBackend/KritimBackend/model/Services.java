@@ -20,9 +20,6 @@ public class Services {
     @Column(name="ImageData",columnDefinition = "LONGBLOB")
     private byte[] ImageData;
 
-    @Column(name="ImageType")
-    private String ImageType;
-
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
     private Users users;
