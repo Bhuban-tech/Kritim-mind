@@ -53,7 +53,7 @@ public class JobsController {
             job.setPost(post);
             job.setSalary(salary);
 //            job.setServiceImage(image.getBytes());
-            job.setJobPublisher(user);
+            job.setJobPublisher(user.getUserId());
             job.setPostedAt(new Timestamp(System.currentTimeMillis()));
 
             jobsRepository.save(job);

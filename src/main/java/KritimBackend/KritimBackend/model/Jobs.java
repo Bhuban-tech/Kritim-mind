@@ -14,9 +14,9 @@ public class Jobs {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long JobId;
 
-    @ManyToOne
-    @JoinColumn(name = "userId", referencedColumnName = "userId")
-    private Users JobPublisher;
+
+    @JoinColumn(name = "userId", referencedColumnName = "userId", nullable = false)
+    public Long JobPublisher;
 
     @Column(nullable = false, updatable = false)
     @CreationTimestamp

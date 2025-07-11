@@ -33,9 +33,8 @@ ServiceDTO {
     public String toString() {
         return "ServiceCatalogDto{" +
                 "ServiceName='" + ServiceName + '\'' +
-                ", ServiceDescription='" + ServiceDescription + '\'' +
-                ", ImageFile=" + (ImageFile != null ? ImageFile.getOriginalFilename() : "null") +
-                '}';
+                ", ServiceDescription='" + ServiceDescription + '\''+
+                   ", ImageFile=" + (ImageFile != null ? ImageFile.getOriginalFilename() : "null") +'}';
     }
 }
 
