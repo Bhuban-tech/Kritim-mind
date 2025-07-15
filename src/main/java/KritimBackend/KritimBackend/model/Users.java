@@ -33,12 +33,18 @@ public class Users {
     private String imageBuffer;
     @Column(nullable = false)
     private String userDesignation;
+    @Column(nullable = true)
+    private String userDescription;
+    @Column(nullable = true)
+    private String userlinkedin;
 
     public Users() {
     }
 
-    public Users(Long userId, String userDesignation, String username, String password, String email, Roles role, String imageBuffer) {
+    public Users(Long userId, String userDesignation, String userlinkedin, Long addedBy, String userDescription, String username, String password, String email, Roles role, String imageBuffer) {
         this.userId = userId;
+        this.userlinkedin = userlinkedin;
+        this.userDescription = userDescription;
         this.userDesignation= userDesignation;
         this.username = username;
         this.addedBy = addedBy;

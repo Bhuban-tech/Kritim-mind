@@ -15,6 +15,8 @@ public class Services {
     private String ServiceName;
     @Column(name="ServiceDescription")
     private String ServiceDescription;
+    @Column (name ="ServiceLongDescription")
+    private String ServiceLongDescription;
 
     @Lob
     @Column(name="ImageData",columnDefinition = "LONGBLOB")

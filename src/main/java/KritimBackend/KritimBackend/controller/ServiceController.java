@@ -17,11 +17,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Base64;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/services")
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")  // Enabling CORS for frontend
 public class ServiceController {
 
     @Autowired
@@ -32,9 +32,7 @@ public class ServiceController {
 
     // Create a new service
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> createService(
-            @ModelAttribute ServiceDTO dto
-    ) throws IOException {
+    public ResponseEntity<String> createService(@ModelAttribute ServiceDTO dto) throws IOException {
         Long userId = dto.getUserId();
 
         if (userId == null) {
@@ -54,7 +52,7 @@ public class ServiceController {
         return ResponseEntity.ok("Service created successfully");
     }
 
-
+    // Get service by ID
     @GetMapping("/{id}")
     public ResponseEntity<ServiceDTO> getServiceById(@PathVariable Long id) {
         Services service = servicesService.getServiceById(id);
@@ -67,6 +65,7 @@ public class ServiceController {
         dto.setServiceId(service.getServiceId());
         dto.setServiceName(service.getServiceName());
         dto.setServiceDescription(service.getServiceDescription());
+        dto.setServiceLongDescription(service.getServiceLongDescription());
 
         if (service.getImageData() != null) {
             dto.setImageData(service.getImageData());
@@ -78,7 +77,6 @@ public class ServiceController {
         return ResponseEntity.ok(dto);
     }
 
-
     // Get all services
     @GetMapping("/all")
     public ResponseEntity<List<ServiceDTO>> getAllServices() {
@@ -89,13 +87,14 @@ public class ServiceController {
             dto.setServiceId(service.getServiceId());
             dto.setServiceName(service.getServiceName());
             dto.setServiceDescription(service.getServiceDescription());
+            dto.setServiceLongDescription(service.getServiceLongDescription());
 
             if (service.getImageData() != null) {
                 dto.setImageData(service.getImageData());
                 dto.setImageBase64(Base64.getEncoder().encodeToString(service.getImageData()));
             }
 
-            dto.setUserId(service.getUsers().getUserId()); // Changed from getUserId to getId
+            dto.setUserId(service.getUsers().getUserId());
             return dto;
         }).collect(Collectors.toList());
 
@@ -115,13 +114,9 @@ public class ServiceController {
         }
     }
 
-
     // Update service
     @PutMapping(value = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> updateService(
-            @PathVariable Long id,
-            @ModelAttribute ServiceDTO dto
-    ) throws IOException {
+    public ResponseEntity<String> updateService(@PathVariable Long id, @ModelAttribute ServiceDTO dto) throws IOException {
         Long userId = dto.getUserId();
 
         if (userId == null) {
@@ -141,13 +136,9 @@ public class ServiceController {
         return ResponseEntity.ok("Service updated successfully");
     }
 
-
     // Delete service
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteService(
-            @PathVariable Long id,
-            @RequestParam("userId") Long userId
-    ) {
+    public ResponseEntity<String> deleteService(@PathVariable Long id, @RequestParam("userId") Long userId) {
         Users user = userService.getUserById(userId);
 
         if (user == null) {
@@ -161,6 +152,4 @@ public class ServiceController {
         servicesService.deleteById(id);
         return ResponseEntity.ok("Service deleted successfully");
     }
-
-
 }

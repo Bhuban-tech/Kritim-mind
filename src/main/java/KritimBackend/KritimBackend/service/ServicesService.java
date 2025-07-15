@@ -20,6 +20,7 @@ public class ServicesService {
             Services service = new Services();
             service.setServiceName(dto.getServiceName());
             service.setServiceDescription(dto.getServiceDescription());
+            service.setServiceLongDescription(dto.getServiceLongDescription());
 
             if (dto.getImageFile() != null && !dto.getImageFile().isEmpty()) {
                 service.setImageData(dto.getImageFile().getBytes());
@@ -49,6 +50,7 @@ public class ServicesService {
                 Services service = serviceOpt.get();
                 service.setServiceName(dto.getServiceName());
                 service.setServiceDescription(dto.getServiceDescription());
+                service.setServiceLongDescription(dto.getServiceLongDescription());
                 if (dto.getImageFile() != null && !dto.getImageFile().isEmpty()) {
                     service.setImageData(dto.getImageFile().getBytes());
                 }

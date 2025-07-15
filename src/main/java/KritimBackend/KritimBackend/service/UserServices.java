@@ -8,7 +8,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
 @Service
 public class UserServices {
 
@@ -38,7 +37,6 @@ public class UserServices {
         Users existingUser = userRepo.findByEmail(users.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-
         if (!passwordEncoder.matches(users.getPassword(), existingUser.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
@@ -50,7 +48,25 @@ public class UserServices {
         return userRepo.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
+    @Transactional
+    public void updateUser(Users existingUser, Users updatedUser) {
+        // Update non-sensitive fields
+        existingUser.setUsername(updatedUser.getUsername());
+        existingUser.setEmail(updatedUser.getEmail());
+        existingUser.setImageBuffer(updatedUser.getImageBuffer());
+        existingUser.setUserDesignation(updatedUser.getUserDesignation());
+
+        // Hash the password if it's provided
+        if (updatedUser.getPassword() != null && !updatedUser.getPassword().isBlank()) {
+            String hashedPassword = passwordEncoder.encode(updatedUser.getPassword());
+            existingUser.setPassword(hashedPassword);
+        }
+
+        // Save the updated user
+        userRepo.save(existingUser);
+    }
+}
 
 
 
-};
+

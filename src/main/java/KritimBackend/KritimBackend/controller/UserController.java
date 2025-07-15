@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,6 +22,9 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private UserServices userServices;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private UserRepository userRepository;
@@ -61,6 +65,7 @@ public class UserController {
 
 
 
+    //TODO:Bug Fixture (Login Using email and password)
     // ✅ LOGIN
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody Users users) {
@@ -97,14 +102,25 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
 
+        // Update non-password fields
         existingUser.setUsername(updatedUser.getUsername());
         existingUser.setEmail(updatedUser.getEmail());
-        existingUser.setPassword(updatedUser.getPassword());
         existingUser.setImageBuffer(updatedUser.getImageBuffer());
+        existingUser.setUserDesignation(updatedUser.getUserDesignation());
+        existingUser.setUserDescription(updatedUser.getUserDescription());
+        existingUser.setUserlinkedin(updatedUser.getUserlinkedin());
 
+        // Only hash and update the password if it is provided
+        if (updatedUser.getPassword() != null && !updatedUser.getPassword().isBlank()) {
+            String hashedPassword = passwordEncoder.encode(updatedUser.getPassword());
+            existingUser.setPassword(hashedPassword);
+        }
+
+        // Save the updated user
         userRepository.save(existingUser);
         return ResponseEntity.ok("User updated successfully");
     }
+
 
 //
 
@@ -125,5 +141,8 @@ public class UserController {
         List<Users> users = userRepository.findAll();
         return ResponseEntity.ok(users);
     }
-};;
+
+}
+
+    ;;
 
