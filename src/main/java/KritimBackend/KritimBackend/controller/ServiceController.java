@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/services")
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")  // Enabling CORS for frontend
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class ServiceController {
 
     @Autowired

@@ -13,10 +13,13 @@ public class Services {
 
     @Column(name="ServiceName")
     private String ServiceName;
-    @Column(name="ServiceDescription")
+    @Column(name = "ServiceDescription")
     private String ServiceDescription;
-    @Column (name ="ServiceLongDescription")
+
+    @Lob
+    @Column(name = "ServiceLongDescription", columnDefinition = "TEXT")
     private String ServiceLongDescription;
+
 
     @Lob
     @Column(name="ImageData",columnDefinition = "LONGBLOB")

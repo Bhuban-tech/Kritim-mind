@@ -22,7 +22,7 @@ public class Users {
     private String email;
 
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Long addedBy;
 
     @Enumerated(EnumType.STRING)
